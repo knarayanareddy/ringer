@@ -1,8 +1,8 @@
 # NextTime — Specification Traceability
 
-**Status:** implementation not started
+**Status:** initial local foundation validated; most requirements remain incomplete
 **Coverage:** 55 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
-**Evidence warning:** every path/status is currently empty or `not_started`; no implementation or evidence is implied.
+**Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
 This is the working register required by the implementation specification. Requirement summaries aid navigation only; `SPEC.md` remains normative.
 
@@ -24,10 +24,10 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-NT-001` | Ingest actual Bee/Apple Watch Bee recording references and transcripts through documented CLI, MCP, or Agent Skill connectivity. | `not_started` | — | — | — |
 | `FR-NT-002` | Require capture mode, consent attestation, situation, and retention policy before processing. | `not_started` | — | — | — |
 | `FR-NT-003` | Separate learner turns using Bee labels, diarization, learner labeling, or self-only mode; ambiguous turns require review. | `not_started` | — | — | — |
-| `FR-NT-004` | Minimize transient transcripts and retain no long-term other-speaker transcript in the canonical attempt. | `not_started` | — | — | — |
+| `FR-NT-004` | Minimize transient transcripts and retain no long-term other-speaker transcript in the canonical attempt. | `in_progress` | `packages/domain/nexttime_domain/minimization.py` | `tests/unit/test_minimization.py` | — |
 | `FR-NT-005` | Propose at most three functional breakdowns with self-evidence excerpts and ASR/model confidence. | `not_started` | — | — | — |
-| `FR-NT-006` | Require learner confirmation/correction before a low-confidence or consequential breakdown updates the learner model. | `not_started` | — | — | — |
-| `FR-NT-007` | Evaluate the authentic attempt with a deterministic situation rubric; ambiguous outcomes remain unknown. | `not_started` | — | — | — |
+| `FR-NT-006` | Require learner confirmation/correction before a low-confidence or consequential breakdown updates the learner model. | `in_progress` | `packages/domain/nexttime_domain/skills.py` | `tests/unit/test_consent_and_skills.py` | — |
+| `FR-NT-007` | Evaluate the authentic attempt with a deterministic situation rubric; ambiguous outcomes remain unknown. | `verified` | `packages/domain/nexttime_domain/rubric.py` | `tests/unit/test_rubric.py`<br>`docs/validation.md` | — |
 | `FR-NT-008` | Let the learner mark the next occurrence or explicitly link a calendar event and rehearsal time. | `not_started` | — | — | — |
 | `FR-NT-009` | Generate a schema-valid 90-second rehearsal targeting one confirmed functional breakdown. | `not_started` | — | — | — |
 | `FR-NT-010` | Deliver local notification and an iOS audio role-play with push-to-talk learner turns. | `not_started` | — | — | — |
@@ -44,27 +44,27 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `INT-NT-006` | Calendar access is optional and incremental; the core flow works with learner-marked recurrence and local notifications. | `not_started` | — | — | — |
 | `NFR-NT-001` | A new Bee transcript begins processing within 60 seconds after bridge ingestion under normal connectivity. | `not_started` | — | — | — |
 | `NFR-NT-002` | Rehearsal audio starts within 1.5 seconds after cached download or 4 seconds on first generation; push-to-talk response begins within 2.5 seconds p95. | `not_started` | — | — | — |
-| `NFR-NT-003` | No long-term record contains other-speaker raw transcript; automated schema and database scans enforce this. | `not_started` | — | — | — |
+| `NFR-NT-003` | No long-term record contains other-speaker raw transcript; automated schema and database scans enforce this. | `in_progress` | `packages/domain/nexttime_domain/minimization.py` | `tests/security` | — |
 | `NFR-NT-004` | Transient source transcripts delete within 24 hours of successful minimization or immediately on failure/revocation. | `not_started` | — | — | — |
 | `NFR-NT-005` | Duplicate Bee recording references create one attempt; rehearsal notifications and outcome updates are idempotent. | `not_started` | — | — | — |
 | `NFR-NT-006` | Real-world outcome assertions below confidence 0.75 or without required evidence remain `unknown` pending learner review. | `not_started` | — | — | — |
 | `SEC-NT-001` | Consent is capture-mode-specific and revocable; self memo is the required alternative when participant consent is unavailable. | `not_started` | — | — | — |
-| `SEC-NT-002` | Other-speaker transcript exists only transiently in consented mode and is never included in the canonical attempt, analytics, prompts for unrelated tasks, or training. | `not_started` | — | — | — |
+| `SEC-NT-002` | Other-speaker transcript exists only transiently in consented mode and is never included in the canonical attempt, analytics, prompts for unrelated tasks, or training. | `in_progress` | `packages/domain/nexttime_domain/minimization.py` | `tests/security` | — |
 | `SEC-NT-003` | Bee credentials remain in the trusted bridge; iOS receives only learner-scoped API tokens. | `not_started` | — | — | — |
 | `SEC-NT-004` | Raw rehearsal audio deletes immediately after transcription; rehearsal transcripts delete after 24 hours unless the learner explicitly saves a self excerpt. | `not_started` | — | — | — |
 | `SEC-NT-005` | Transient source deletion is alarmed and verified; revoked consent prevents further bridge acknowledgement/ingestion. | `not_started` | — | — | — |
 | `SEC-NT-006` | No sensitive situation ingestion; classifiers and user controls exclude medical/legal/immigration/disciplinary/financial/crisis content. | `not_started` | — | — | — |
 | `SEC-NT-007` | No inference of emotion, intelligence, employment status, ethnicity, health, or native identity. | `not_started` | — | — | — |
 | `SEC-NT-008` | Evaluation reports ASR errors by accent and device; low-confidence recognition never becomes a negative real-world outcome without review. | `not_started` | — | — | — |
-| `AC-NT-001` | Given no consent attestation, when a transcript arrives, then processing is rejected and transient data is deleted. | `not_started` | — | — | — |
-| `AC-NT-002` | Given self-memo mode, when other-speaker-like turns appear, then they are excluded or sent to review, never persisted as conversation evidence. | `not_started` | — | — | — |
+| `AC-NT-001` | Given no consent attestation, when a transcript arrives, then processing is rejected and transient data is deleted. | `in_progress` | `packages/domain/nexttime_domain/consent.py` | `tests/unit/test_consent_and_skills.py` | — |
+| `AC-NT-002` | Given self-memo mode, when other-speaker-like turns appear, then they are excluded or sent to review, never persisted as conversation evidence. | `in_progress` | `packages/domain/nexttime_domain/minimization.py` | `tests/unit/test_minimization.py` | — |
 | `AC-NT-003` | Given duplicate Bee references, when ingested concurrently, then one attempt results. | `not_started` | — | — | — |
-| `AC-NT-004` | Given ambiguous diarization, when extraction completes, then review is required and no skill update occurs. | `not_started` | — | — | — |
-| `AC-NT-005` | Given a minimized attempt, when serialized/scanned, then it passes schema and contains no other-speaker transcript collection. | `not_started` | — | — | — |
+| `AC-NT-004` | Given ambiguous diarization, when extraction completes, then review is required and no skill update occurs. | `verified` | `packages/domain/nexttime_domain/rubric.py`<br>`packages/domain/nexttime_domain/skills.py` | `tests/unit`<br>`docs/validation.md` | — |
+| `AC-NT-005` | Given a minimized attempt, when serialized/scanned, then it passes schema and contains no other-speaker transcript collection. | `verified` | `packages/domain/nexttime_domain/minimization.py` | `tests/contract`<br>`tests/unit/test_minimization.py`<br>`docs/validation.md` | — |
 | `AC-NT-006` | Given a rejected breakdown, when review completes, then learner state and rehearsal targeting do not use it. | `not_started` | — | — | — |
-| `AC-NT-007` | Given ASR confidence below 0.75, when outcome is proposed, then status remains unknown pending learner review. | `not_started` | — | — | — |
-| `AC-NT-008` | Given goal stated but no appointment confirmation, when rubric runs, then outcome is partial/failed according to evidence, not success. | `not_started` | — | — | — |
-| `AC-NT-009` | Given sufficient confirmation evidence, when rubric runs, then deterministic success and criterion explanation result. | `not_started` | — | — | — |
+| `AC-NT-007` | Given ASR confidence below 0.75, when outcome is proposed, then status remains unknown pending learner review. | `verified` | `packages/domain/nexttime_domain/rubric.py` | `tests/unit/test_rubric.py`<br>`docs/validation.md` | — |
+| `AC-NT-008` | Given goal stated but no appointment confirmation, when rubric runs, then outcome is partial/failed according to evidence, not success. | `verified` | `packages/domain/nexttime_domain/rubric.py` | `tests/unit/test_rubric.py`<br>`docs/validation.md` | — |
+| `AC-NT-009` | Given sufficient confirmation evidence, when rubric runs, then deterministic success and criterion explanation result. | `verified` | `packages/domain/nexttime_domain/rubric.py` | `tests/unit/test_rubric.py`<br>`docs/validation.md` | — |
 | `AC-NT-010` | Given a learner-marked recurrence, when rehearsal is generated, then it targets only the confirmed breakdown and lasts at most 120 seconds. | `not_started` | — | — | — |
 | `AC-NT-011` | Given Bedrock unavailable, when rehearsal is requested, then the reviewed template delivers the same target function. | `not_started` | — | — | — |
 | `AC-NT-012` | Given quiet hours, when default time is computed, then learner must choose notification behavior rather than being interrupted automatically. | `not_started` | — | — | — |

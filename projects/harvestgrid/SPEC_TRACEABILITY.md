@@ -1,8 +1,8 @@
 # HarvestGrid — Specification Traceability
 
-**Status:** implementation not started
+**Status:** initial local foundation validated; most requirements remain incomplete
 **Coverage:** 60 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
-**Evidence warning:** every path/status is currently empty or `not_started`; no implementation or evidence is implied.
+**Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
 This is the working register required by the implementation specification. Requirement summaries aid navigation only; `SPEC.md` remains normative.
 
@@ -27,11 +27,11 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-HG-004` | Collect supported snapshots/live-view frames/event clips through the real Ring adapter; deduplicate and record provenance. | `not_started` | — | — | — |
 | `FR-HG-005` | Register frames, detect camera movement, crop to the approved tree ROI, and reject unsuitable views. | `not_started` | — | — | — |
 | `FR-HG-006` | Produce visible-fruit detections, count/area/color features, occlusion and quality metrics with model/data versions. | `not_started` | — | — | — |
-| `FR-HG-007` | Generate a versioned probabilistic harvest window and visible-yield estimate using the canonical schema. | `not_started` | — | — | — |
-| `FR-HG-008` | Mark forecasts experimental when data/model gates are unmet; always require human readiness confirmation. | `not_started` | — | — | — |
+| `FR-HG-007` | Generate a versioned probabilistic harvest window and visible-yield estimate using the canonical schema. | `in_progress` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/contract`<br>`tests/unit/test_forecast.py` | — |
+| `FR-HG-008` | Mark forecasts experimental when data/model gates are unmet; always require human readiness confirmation. | `in_progress` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/unit/test_forecast.py` | — |
 | `FR-HG-009` | Obtain owner approval before a forecast becomes a glean request. | `not_started` | — | — | — |
 | `FR-HG-010` | Capture volunteer training/availability/equipment and recipient acceptance/capacity as hard constraints. | `not_started` | — | — | — |
-| `FR-HG-011` | Produce deterministic coordinator-reviewed assignments with no protected-trait scoring. | `not_started` | — | — | — |
+| `FR-HG-011` | Produce deterministic coordinator-reviewed assignments with no protected-trait scoring. | `in_progress` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py` | — |
 | `FR-HG-012` | Orchestrate invitations, reminders, cancellations, access instructions, and escalation with durable state. | `not_started` | — | — | — |
 | `FR-HG-013` | Reveal exact address/access notes only to assigned eligible volunteers for the minimum necessary period. | `not_started` | — | — | — |
 | `FR-HG-014` | Record coordinator completion, actual harvested/accepted weights, rejection/spoilage, and donation receipt data. | `not_started` | — | — | — |
@@ -55,7 +55,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `SEC-HG-002` | Raw Ring media defaults to deletion seven days after feature extraction; crop-only media requires separate owner consent for training. | `not_started` | — | — | — |
 | `SEC-HG-003` | No public residential map, face/plate recognition, person tracking, or volunteer behavioral surveillance. | `not_started` | — | — | — |
 | `SEC-HG-004` | Camera consent and organizational operating consent are separately revocable; revocation stops collection and address reveal. | `not_started` | — | — | — |
-| `SEC-HG-005` | Visual outputs never assert internal ripeness or food safety; coordinator checklist governs operational decisions. | `not_started` | — | — | — |
+| `SEC-HG-005` | Visual outputs never assert internal ripeness or food safety; coordinator checklist governs operational decisions. | `in_progress` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/security` | — |
 | `SEC-HG-006` | Volunteers are never auto-dispatched; trained leader and coordinator approval are mandatory. | `not_started` | — | — | — |
 | `SEC-HG-007` | Owner address, raw media, access notes, and recipient information are excluded from logs/model prompts/public receipts. | `not_started` | — | — | — |
 | `SEC-HG-008` | Dataset exports use crop-only media, consent manifest, coarse/no location, and re-identification review. | `not_started` | — | — | — |
@@ -67,13 +67,13 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-HG-006` | Given moved camera/poor registration, when processing, then view pauses and forecast enters quality review. | `not_started` | — | — | — |
 | `AC-HG-007` | Given people/vehicles outside tree ROI, when minimizing, then masks/crop prevent their use in features or training exports. | `not_started` | — | — | — |
 | `AC-HG-008` | Given low-quality/occluded images, when forecasting, then uncertainty/reason codes increase and no confident ready claim appears. | `not_started` | — | — | — |
-| `AC-HG-009` | Given insufficient training data, when forecasting, then baseline output is experimental and requires review. | `not_started` | — | — | — |
-| `AC-HG-010` | Given any valid forecast, when serialized, then it passes schema and has internal ripeness/food-safety flags false. | `not_started` | — | — | — |
-| `AC-HG-011` | Given invalid interval ordering/model output, when validating, then forecast is rejected rather than repaired arbitrarily. | `not_started` | — | — | — |
-| `AC-HG-012` | Given no owner approval, when matching starts, then no invitations or address reveals occur. | `not_started` | — | — | — |
-| `AC-HG-013` | Given no trained leader, when matching, then the glean is ineligible regardless of score. | `not_started` | — | — | — |
-| `AC-HG-014` | Given insufficient recipient capacity, when matching, then hard filter blocks or requires coordinator alternative. | `not_started` | — | — | — |
-| `AC-HG-015` | Given two identical ranking inputs, when scored twice, then explanations and ordering are identical. | `not_started` | — | — | — |
+| `AC-HG-009` | Given insufficient training data, when forecasting, then baseline output is experimental and requires review. | `verified` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/unit/test_forecast.py`<br>`docs/validation.md` | — |
+| `AC-HG-010` | Given any valid forecast, when serialized, then it passes schema and has internal ripeness/food-safety flags false. | `verified` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/contract`<br>`docs/validation.md` | — |
+| `AC-HG-011` | Given invalid interval ordering/model output, when validating, then forecast is rejected rather than repaired arbitrarily. | `verified` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/unit/test_forecast.py`<br>`docs/validation.md` | — |
+| `AC-HG-012` | Given no owner approval, when matching starts, then no invitations or address reveals occur. | `in_progress` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py` | — |
+| `AC-HG-013` | Given no trained leader, when matching, then the glean is ineligible regardless of score. | `verified` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py`<br>`docs/validation.md` | — |
+| `AC-HG-014` | Given insufficient recipient capacity, when matching, then hard filter blocks or requires coordinator alternative. | `verified` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py`<br>`docs/validation.md` | — |
+| `AC-HG-015` | Given two identical ranking inputs, when scored twice, then explanations and ordering are identical. | `verified` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py`<br>`docs/validation.md` | — |
 | `AC-HG-016` | Given a material new forecast after confirmation, when received, then existing event remains and coordinator review is required. | `not_started` | — | — | — |
 | `AC-HG-017` | Given cancellation, when volunteer requests access, then exact details are unavailable and tokens are revoked. | `not_started` | — | — | — |
 | `AC-HG-018` | Given duplicate invitation/completion events, when processed, then one message/event/receipt results. | `not_started` | — | — | — |

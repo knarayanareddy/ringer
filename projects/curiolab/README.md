@@ -1,30 +1,44 @@
 # CurioLab
 
 **Track:** Fire TV
-**Status:** specification and low-fidelity design ready; implementation not started
+**Status:** initial episode-domain and content-compiler foundation validated locally; Fire OS/companion applications not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
-CurioLab is a Fire OS science episode driven by family-confirmed household measurements.
+CurioLab is a two-screen family science episode in which predictions precede results and confirmed measurements—not canned success values—drive comparisons.
+
+## Local foundation
+
+Requirements: Node.js 22, Corepack, `make`, and a Java 17 runtime for the pure Kotlin harness. The pinned npm Kotlin compiler is installed by `make bootstrap`; this is not an Android SDK.
+
+```bash
+make setup                 # install and create .env.local from safe examples
+make dev                   # deterministic Kotlin fixture; no devices or cloud
+make lint typecheck
+make test-unit test-contract test-security
+corepack pnpm validate:content
+make build
+```
+
+Draft validation checks schema/graph semantics only. `--publish` intentionally rejects the current draft because reviews and hashes are placeholders.
+
+`make test-security` audits the npm graph. Native integration, E2E, infrastructure, and deployment targets intentionally fail while unavailable.
 
 ## Workspace map
 
 | Path | Purpose |
 | --- | --- |
-| [`AGENTS.md`](./AGENTS.md) | Assignment, ownership boundaries, safeguards, preflight, and completion gate |
-| [`SPEC.md`](./SPEC.md) | Canonical implementation specification and vertical slices |
-| [`schemas/episode.schema.json`](./schemas/episode.schema.json) | Canonical machine-readable contract |
-| [`examples/episode.example.json`](./examples/episode.example.json) | Validated fictional fixture/draft instance, not real evidence |
-| [`ui/`](./ui/) | Product truth, design system, tokens, theme, and static low-fidelity wireframes |
-| [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) | Complete requirement/acceptance register; currently not started |
-| [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md) | Controlled deviation log; currently empty |
-| [`../../specs/SHARED_ENGINEERING_STANDARD.md`](../../specs/SHARED_ENGINEERING_STANDARD.md) | Shared release-blocking engineering requirements |
+| [`SPEC.md`](./SPEC.md) | Canonical requirements and vertical slices |
+| [`schemas/episode.schema.json`](./schemas/episode.schema.json) | Canonical episode contract |
+| [`packages/episode-engine/`](./packages/episode-engine/) | Immutable prediction, measurement, comparison, and resume domain state |
+| [`packages/content-compiler/`](./packages/content-compiler/) | Draft schema/graph and publication-preflight checks |
+| [`content/episodes/bridge-to-moon-base/`](./content/episodes/bridge-to-moon-base/) | Draft content copy and pending human reviews |
+| [`scripts/validate-content.ts`](./scripts/validate-content.ts) | Explicit draft/publication-preflight CLI |
+| [`tests/`](./tests/) | TypeScript and Kotlin unit/contract/security checks |
+| [`docs/`](./docs/) | Setup evidence, boundaries, and validation results |
+| [`ui/`](./ui/) | Static design guidance, not a Fire OS UI |
 
-## Implementation status
+## External blockers
 
-No application source, production runtime, credentials, live integration, device run, or user study exists in this workspace. The implementation agent creates the `apps/`, `services/`, `packages/`, `infra/`, `tests/`, `docs/`, and `evidence/` structure required by `SPEC.md` as appropriate to this project.
+Fire OS SDK/signing/device or permitted simulator, Android companion/CameraX, deployed WebSocket relay, AWS model/voice services, real content assets/signatures, family accessibility/safety reviews, and learning/device evidence remain blocked or unimplemented. The fixture does not perform a physical experiment or establish a learning outcome.
 
-The static UI is opened through [`ui/wireframe.html`](./ui/wireframe.html). It uses shared review primitives from `specs/ui/`; it is not a production frontend.
-
-## Parallel-agent rule
-
-This folder is the only implementation workspace owned by the CurioLab agent. Keep other projects and shared contracts unchanged. External credentials, devices, partnerships, datasets, and human approvals listed in `AGENTS.md` remain explicit blockers until genuinely available.
+Maintain [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) and [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md) without treating local fixtures as live evidence.

@@ -1,30 +1,43 @@
 # HarvestGrid
 
 **Track:** Ring
-**Status:** specification and low-fidelity design ready; implementation not started
+**Status:** initial forecast-contract and coordinator-matching foundation validated locally; Ring/media/forecast operations not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
-HarvestGrid is privacy-bounded Ring observations, probabilistic harvest forecasting, and coordinator-led gleaning operations.
+HarvestGrid is intended to support privacy-preserving, coordinator-reviewed backyard harvest logistics. Visual estimates cannot establish internal ripeness or food safety.
+
+## Local foundation
+
+Requirements: Python 3.12, `uv`, and `make`. Dependencies are locked in `uv.lock`; domain and matching runtime code have no third-party runtime dependency.
+
+```bash
+make setup                 # uv sync --frozen and safe .env.local
+make dev                   # fictional seasonal-baseline contract fixture
+make lint typecheck
+make test-unit test-contract test-security
+make build
+```
+
+Unit tests enforce at least 90% branch-aware coverage across domain and matching packages. `make test-security` runs operational-boundary tests and `pip-audit --skip-editable`; its audit runner needs working SSL/TLS.
+
+Ring, media processing, operational forecasts, persistence, notifications, infrastructure, E2E, and deployment targets intentionally fail while absent.
 
 ## Workspace map
 
 | Path | Purpose |
 | --- | --- |
-| [`AGENTS.md`](./AGENTS.md) | Assignment, ownership boundaries, safeguards, preflight, and completion gate |
-| [`SPEC.md`](./SPEC.md) | Canonical implementation specification and vertical slices |
-| [`schemas/harvest-window.schema.json`](./schemas/harvest-window.schema.json) | Canonical machine-readable contract |
-| [`examples/harvest-window.example.json`](./examples/harvest-window.example.json) | Validated fictional fixture/draft instance, not real evidence |
-| [`ui/`](./ui/) | Product truth, design system, tokens, theme, and static low-fidelity wireframes |
-| [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) | Complete requirement/acceptance register; currently not started |
-| [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md) | Controlled deviation log; currently empty |
-| [`../../specs/SHARED_ENGINEERING_STANDARD.md`](../../specs/SHARED_ENGINEERING_STANDARD.md) | Shared release-blocking engineering requirements |
+| [`SPEC.md`](./SPEC.md) | Canonical requirements and vertical slices |
+| [`schemas/harvest-window.schema.json`](./schemas/harvest-window.schema.json) | Canonical forecast contract |
+| [`packages/domain/harvestgrid_domain/`](./packages/domain/harvestgrid_domain/) | Forecast semantic checks and fixture walking path |
+| [`packages/matching/harvestgrid_domain_matching/`](./packages/matching/harvestgrid_domain_matching/) | Hard eligibility filters, scoring, and deterministic ties |
+| [`packages/contracts/`](./packages/contracts/) | Byte-identical schema copy used by contract tests |
+| [`content/cultivars/`](./content/cultivars/) | Placeholder boundary; no cultivar priors supplied |
+| [`datasets/`](./datasets/) and [`models/`](./models/) | Explicit absent-data/model boundaries |
+| [`tests/`](./tests/) | Unit, schema-contract, and operational-boundary tests |
+| [`docs/`](./docs/) | Preflight, architecture, data inventory, dependencies, and validation |
 
-## Implementation status
+## External blockers
 
-No application source, production runtime, credentials, live integration, device run, or user study exists in this workspace. The implementation agent creates the `apps/`, `services/`, `packages/`, `infra/`, `tests/`, `docs/`, and `evidence/` structure required by `SPEC.md` as appropriate to this project.
+A documented Ring integration and real capabilities, residential-media consent, weather/CV services, licensed datasets and cultivar priors, model artifacts/evaluation, coordinator/participant reviews, and release evidence remain blocked or unimplemented. The fixture is experimental, seasonal-baseline-only, and human-review-required; it is not an operational forecast or assignment.
 
-The static UI is opened through [`ui/wireframe.html`](./ui/wireframe.html). It uses shared review primitives from `specs/ui/`; it is not a production frontend.
-
-## Parallel-agent rule
-
-This folder is the only implementation workspace owned by the HarvestGrid agent. Keep other projects and shared contracts unchanged. External credentials, devices, partnerships, datasets, and human approvals listed in `AGENTS.md` remain explicit blockers until genuinely available.
+Maintain [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) and [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md). Never place residential media, private datasets, or model binaries in Git.

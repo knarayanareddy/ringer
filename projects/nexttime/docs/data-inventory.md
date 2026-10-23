@@ -1,0 +1,19 @@
+# NextTime data inventory
+
+Inventory date: 2026-10-23. No authentic learner or Bee data is present.
+
+| Data | Current location | Classification/provenance | Retention and use |
+| --- | --- | --- | --- |
+| Fictional minimized attempt | `examples/real-world-attempt.example.json` | Synthetic self-evidence/outcome fixture | Source-controlled schema/privacy tests only |
+| Situation rubric | `packages/rubrics/rubric_v1.json` | Draft authored rules; educator review not evidenced | Deterministic fixture evaluation only |
+| Skill state | Python domain models in tests | Synthetic alpha/beta/count values | In-memory only; no learner profile stored |
+| Schema copy | `packages/contracts/` | Non-sensitive attempt contract | Byte-drift and round-trip tests |
+| Configuration examples | `.env.example` | Safe placeholders, no Bee/AWS secrets | Real environment files are Git-ignored |
+
+## Not present or collected
+
+No real Bee recording/reference, learner or other-speaker transcript, diarization, audio, calendar event, notification, name, accent label, device observation, or authentic progress record exists. No transient source store, database, analytics, prompt log, or training dataset exists.
+
+Other-speaker transcript is prohibited from the canonical attempt. The recursive scanner is a source-level guard, not proof of production storage scanning or deletion. Before live ingestion, capture-specific consent, self-only fallback, sensitive-situation exclusion, transient deletion within 24 hours, raw rehearsal-audio deletion, object authorization, export/correction, and verified revocation/deletion workers remain required.
+
+Fixtures must remain synthetic. Real transcripts, audio, learner exports, credentials, and sensitive evaluation slices must not be committed.

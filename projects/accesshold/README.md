@@ -1,30 +1,45 @@
 # AccessHold
 
 **Track:** Alexa+
-**Status:** specification and low-fidelity design ready; implementation not started
+**Status:** initial deterministic foundation validated locally; application and live integrations not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
-AccessHold is post-booking accessibility evidence monitoring and explicitly approved disruption recovery.
+AccessHold is post-booking accessibility evidence monitoring and explicitly approved disruption recovery. Its output describes workflow evidence, never a guarantee of physical accessibility.
+
+## Local foundation
+
+Requirements: Node.js 22, Corepack, and `make`. Dependencies are pinned by `package.json` and `pnpm-lock.yaml`.
+
+```bash
+make setup                 # install and create .env.local from safe examples
+make dev                   # run the explicitly labeled fixture walking path
+make lint typecheck
+make test-unit test-contract test-security
+make build
+```
+
+`make test-security` also audits the locked npm dependency graph. `make test-integration`, `make test-e2e`, `make test-infra`, and `make deploy` intentionally fail while their real dependencies are absent.
+
+The current fixture evaluates contract predicates and recovery transitions only. It does not import email, call Alexa+, SES, Bedrock, a calendar, or a travel provider.
 
 ## Workspace map
 
 | Path | Purpose |
 | --- | --- |
-| [`AGENTS.md`](./AGENTS.md) | Assignment, ownership boundaries, safeguards, preflight, and completion gate |
 | [`SPEC.md`](./SPEC.md) | Canonical implementation specification and vertical slices |
 | [`schemas/access-contract.schema.json`](./schemas/access-contract.schema.json) | Canonical machine-readable contract |
-| [`examples/access-contract.example.json`](./examples/access-contract.example.json) | Validated fictional fixture/draft instance, not real evidence |
-| [`ui/`](./ui/) | Product truth, design system, tokens, theme, and static low-fidelity wireframes |
-| [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) | Complete requirement/acceptance register; currently not started |
-| [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md) | Controlled deviation log; currently empty |
-| [`../../specs/SHARED_ENGINEERING_STANDARD.md`](../../specs/SHARED_ENGINEERING_STANDARD.md) | Shared release-blocking engineering requirements |
+| [`examples/access-contract.example.json`](./examples/access-contract.example.json) | Validated fictional fixture, not real evidence |
+| [`packages/contracts/`](./packages/contracts/) | Typed schema loading and byte-identical schema copy |
+| [`packages/policy-engine/`](./packages/policy-engine/) | Deterministic units, predicates, evidence freshness, and aggregation |
+| [`packages/domain/`](./packages/domain/) | Recovery-state and replacement-confirmation rules |
+| [`content/feature-registry/`](./content/feature-registry/) | Draft feature definitions; not provider verification |
+| [`scripts/walking-skeleton.ts`](./scripts/walking-skeleton.ts) | Offline fixture path |
+| [`tests/`](./tests/) | Unit, canonical-contract, and policy-boundary tests |
+| [`docs/`](./docs/) | Preflight, architecture, data inventory, dependencies, and validation |
+| [`ui/`](./ui/) | Static design guidance, not a production frontend |
 
-## Implementation status
+## External blockers
 
-No application source, production runtime, credentials, live integration, device run, or user study exists in this workspace. The implementation agent creates the `apps/`, `services/`, `packages/`, `infra/`, `tests/`, `docs/`, and `evidence/` structure required by `SPEC.md` as appropriate to this project.
+Alexa+/MCP, AWS/SES/Bedrock, travel-provider capabilities, independently imported confirmations, accessibility participants, deployment, and release evidence remain unavailable or unimplemented. See [`docs/preflight.md`](./docs/preflight.md) and [`docs/validation.md`](./docs/validation.md). Fixture success cannot satisfy those gates.
 
-The static UI is opened through [`ui/wireframe.html`](./ui/wireframe.html). It uses shared review primitives from `specs/ui/`; it is not a production frontend.
-
-## Parallel-agent rule
-
-This folder is the only implementation workspace owned by the AccessHold agent. Keep other projects and shared contracts unchanged. External credentials, devices, partnerships, datasets, and human approvals listed in `AGENTS.md` remain explicit blockers until genuinely available.
+Maintain [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) and [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md) as slices are completed. Do not import another project's production code or create a shared runtime/database.

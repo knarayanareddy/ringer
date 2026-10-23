@@ -48,4 +48,4 @@ For example, the AccessHold path is `projects/accesshold`; the CurioLab path is 
 
 ## Current status
 
-All five workspaces are specification/design scaffolds. No application implementation, live integration, device run, user study, or production evidence has been added by this reorganization.
+All five workspaces now have independently locked, locally validated initial domain/content foundations in addition to their specification/design scaffolds. Together they pass 115 local unit/contract/security checks, but applications remain incomplete. No live integration, real observation, device run, user study, operational model, production deployment, or release evidence is claimed. See each project's `README.md` and `docs/validation.md` for exact scope and results.
