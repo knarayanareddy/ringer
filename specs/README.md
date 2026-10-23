@@ -18,6 +18,10 @@ This directory contains five independent build specifications for the concepts i
 
 All projects also depend on [SHARED_ENGINEERING_STANDARD.md](./SHARED_ENGINEERING_STANDARD.md).
 
+## UI design layer
+
+The [UI design-system and low-fidelity wireframe pack](./ui/README.md) adds product-truth briefs, visual/component guidance, semantic tokens, and 25 browser-viewable screen compositions across the five projects. Open its [browser index](./ui/index.html) for design review. These artifacts remain static design contracts; they are not five applications, high-fidelity prototypes, device demonstrations, or user-study evidence.
+
 ## Validated contract examples
 
 Each schema has a complete example instance. The examples are intentionally marked `fixture` or `draft`: they are serialization targets, not real user evidence, approved content, or production model results.
