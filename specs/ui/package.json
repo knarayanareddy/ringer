@@ -1,0 +1,18 @@
+{
+  "name": "ringer-ui-validation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reproducible validation tooling for the Ringer static UI specification pack; not an application runtime.",
+  "scripts": {
+    "validate:static": "python3 validate.py",
+    "validate:browser": "node validate-browser.cjs",
+    "audit:ui": "impeccable detect --json index.html index.css wireframes.css wireframes.js accesshold curiolab nexttime harvestgrid roomsmith",
+    "validate": "npm run validate:static && npm run validate:browser && npm run --silent audit:ui"
+  },
+  "devDependencies": {
+    "@sparticuz/chromium": "153.0.0",
+    "axe-core": "4.14.0",
+    "impeccable": "4.7.0",
+    "playwright-core": "1.64.1"
+  }
+}
