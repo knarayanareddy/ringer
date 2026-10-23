@@ -1,6 +1,6 @@
 # RoomSmith — Specification Traceability
 
-**Status:** local ordered-remote-episode and atomic fixture-snapshot slices validated; most requirements remain incomplete
+**Status:** local ordered-remote-episode, structured-observation-ingress, and atomic fixture-snapshot slices validated; most requirements remain incomplete
 **Coverage:** 57 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -24,9 +24,9 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-RS-001` | Install and run a signed/versioned episode bundle on Fire OS with remote navigation. | `not_started` | — | — | — |
 | `FR-RS-002` | Configure player count, object kit, accessibility, adult supervision, and privacy before play. | `not_started` | — | — | — |
 | `FR-RS-003` | Pair an Android companion using one-time credentials and encrypted WebRTC DataChannels; cloud-relay fallback is explicit. | `not_started` | — | — | — |
-| `FR-RS-004` | Calibrate the printable PlayMat and selected object kit before physical puzzles. | `not_started` | — | — | — |
-| `FR-RS-005` | Detect only allowlisted objects, colors, spatial relations, zones, and hand gestures on-device. | `not_started` | — | — | — |
-| `FR-RS-006` | Emit candidate and stable structured observations with confidence, sequence, and calibration state; never emit frames. | `not_started` | — | — | — |
+| `FR-RS-004` | Calibrate the printable PlayMat and selected object kit before physical puzzles. | `in_progress` | `packages/session-contracts/src/index.ts` | `tests/unit/observation-ingress.test.ts` | — |
+| `FR-RS-005` | Detect only allowlisted objects, colors, spatial relations, zones, and hand gestures on-device. | `in_progress` | `packages/session-contracts/src/index.ts` | `tests/unit/observation-ingress.test.ts` | — |
+| `FR-RS-006` | Emit candidate and stable structured observations with confidence, sequence, and calibration state; never emit frames. | `in_progress` | `packages/session-contracts/src/index.ts` | `tests/unit/observation-ingress.test.ts`<br>`docs/validation.md` | — |
 | `FR-RS-007` | Evaluate puzzle requirements deterministically on Fire TV using hold-to-verify and temporal hysteresis. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `FR-RS-008` | Complete the three authored puzzles and corresponding scene transitions without model participation. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt` | `packages/puzzle-engine/src/test` | — |
 | `FR-RS-009` | Provide role-based clues and a complete solo path. | `not_started` | — | — | — |
@@ -46,11 +46,11 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `NFR-RS-002` | Scene rendering sustains 30 fps at 1080p; remote response begins within 100 ms. | `not_started` | — | — | — |
 | `NFR-RS-003` | Puzzle evaluation below 8 ms and never waits on network/model inference. | `not_started` | — | — | — |
 | `NFR-RS-004` | Zero false puzzle accepts in 1,000 scripted negative interactions per release; measured valid-setup first-attempt completion at least 95% before fallback. | `not_started` | — | — | — |
-| `NFR-RS-005` | Perception loss produces a recoverable calibration/fallback state within two seconds, never a false success. | `not_started` | — | — | — |
+| `NFR-RS-005` | Perception loss produces a recoverable calibration/fallback state within two seconds, never a false success. | `in_progress` | `packages/session-contracts/src/index.ts` | `tests/unit/observation-ingress.test.ts` | — |
 | `NFR-RS-006` | Offline remote-only play works after episode download; no raw room media appears in logs, backend storage, analytics, or case reports. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
-| `SEC-RS-001` | Raw frames, hand landmarks, room images, and continuous audio never leave the companion; protocols reject media fields/tracks. | `not_started` | — | — | — |
+| `SEC-RS-001` | Raw frames, hand landmarks, room images, and continuous audio never leave the companion; protocols reject media fields/tracks. | `in_progress` | `packages/session-contracts/src/index.ts` | `tests/unit/observation-ingress.test.ts` | — |
 | `SEC-RS-002` | Pairing/signaling/TURN credentials are one-session, short-lived, revocable, and device-bound. | `not_started` | — | — | — |
-| `SEC-RS-003` | Companion cannot commit puzzle state; TV validates session, puzzle, calibration, freshness, and hold. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
+| `SEC-RS-003` | Companion cannot commit puzzle state; TV validates session, puzzle, calibration, freshness, and hold. | `in_progress` | `packages/puzzle-engine`<br>`packages/session-contracts/src/index.ts` | `packages/puzzle-engine/src/test`<br>`tests/unit/observation-ingress.test.ts` | — |
 | `SEC-RS-004` | Signed content and predicate registries prevent malicious bundles or generated solution changes. | `not_started` | — | — | — |
 | `SEC-RS-005` | Session snapshots and director context delete after seven days; case reports contain game metadata only. | `not_started` | — | — | — |
 | `SEC-RS-006` | No face/emotion/identity/age inference, behavioral advertising, or training on room media. | `not_started` | — | — | — |
@@ -69,12 +69,12 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-RS-011` | Given sequence step 2 before step 1, when evaluating, then sequence does not complete and neutral guidance appears. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `AC-RS-012` | Given valid ordered steps within 30 seconds, when evaluating, then final puzzle completes once. | `verified` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-RS-013` | Given no-timing mode, when sequence exceeds 30 seconds, then order still matters but time does not fail the player. | `verified` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test`<br>`docs/validation.md` | — |
-| `AC-RS-014` | Given camera loss during hold, when detected, then candidate verification cancels and fallback becomes available. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
+| `AC-RS-014` | Given camera loss during hold, when detected, then candidate verification cancels and fallback becomes available. | `in_progress` | `packages/puzzle-engine`<br>`packages/session-contracts/src/index.ts` | `packages/puzzle-engine/src/test`<br>`tests/unit/observation-ingress.test.ts` | — |
 | `AC-RS-015` | Given any camera puzzle, when remote fallback is selected, then the same story node can complete accessibly. | `in_progress` | `packages/puzzle-engine`<br>`packages/content-compiler` | `tests/unit`<br>`packages/puzzle-engine/src/test` | — |
-| `AC-RS-016` | Given companion-sent `puzzle.complete`, when received, then TV rejects it and logs a security event without raw payload. | `not_started` | — | — | — |
-| `AC-RS-017` | Given duplicate/stale observations, when received, then no duplicate state transition occurs. | `verified` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test`<br>`docs/validation.md` | — |
+| `AC-RS-016` | Given companion-sent `puzzle.complete`, when received, then TV rejects it and logs a security event without raw payload. | `implemented` | `packages/session-contracts/src/index.ts` | `tests/unit/observation-ingress.test.ts`<br>`docs/validation.md` | — |
+| `AC-RS-017` | Given duplicate/stale observations, when received, then no duplicate state transition occurs. | `verified` | `packages/puzzle-engine`<br>`packages/session-contracts/src/index.ts` | `packages/puzzle-engine/src/test`<br>`tests/unit/observation-ingress.test.ts`<br>`docs/validation.md` | — |
 | `AC-RS-018` | Given process death after a completed puzzle, when resumed, then committed state/scene restores without replaying completion. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt`<br>`packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeFileStore.kt` | `packages/puzzle-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-RS-019` | Given Bedrock failure, when hint is requested, then authored hint arrives within budget and puzzle state is unchanged. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt` | `packages/puzzle-engine/src/test` | — |
-| `AC-RS-020` | Given revoked companion, when reconnecting, then access/private clues are denied until new approval. | `not_started` | — | — | — |
+| `AC-RS-020` | Given revoked companion, when reconnecting, then access/private clues are denied until new approval. | `in_progress` | `packages/session-contracts/src/index.ts` | `tests/unit/observation-ingress.test.ts` | — |
 | `AC-RS-021` | Given offline mode after content download, when playing remote-only, then all three puzzles and case report complete. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `AC-RS-022` | Given actual Fire TV device/simulator, when demo runs, then real companion observations deterministically change the live episode. | `not_started` | — | — | — |

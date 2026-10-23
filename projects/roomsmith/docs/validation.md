@@ -8,17 +8,19 @@ Recorded 2026-10-23 on the local vertical-slice branch. Evidence covers pure Kot
 | --- | --- |
 | ESLint + Prettier | Passed |
 | TypeScript strict typecheck + Kotlin main/test compilation | Passed |
-| TypeScript graph/fallback unit tests | 6/6 passed |
+| TypeScript unit tests | 12/12 passed: 6 graph/fallback and 6 structured-observation-ingress tests |
 | Kotlin puzzle-engine tests | 21/21 passed |
 | Canonical schema/contract tests | 4/4 passed; schema copy byte-identical |
 | Content-publication security test | 1/1 passed |
 | npm audit, moderate and above | No known vulnerabilities |
 | TypeScript build + Kotlin runtime JAR build | Passed |
 | Draft content CLI | Valid in `draft-development` mode |
-| Remote fixture walking path | Ordered three-puzzle completion, timed remote hold, authored hint, two atomic fixture-file saves/reopens, metadata-only report |
-| **Total tests** | **32/32 passed** |
+| Fixture walking paths | Structured candidate/stable-proposal/duplicate/invalid/forged-completion ingress plus ordered three-puzzle remote completion, timed remote hold, authored hint, two atomic fixture-file saves/reopens, metadata-only report |
+| **Total tests** | **38/38 passed** |
 
 The remote coordinator enforces authored puzzle order and answers, requires the 750 ms shield hold in standard mode, permits single-selection shield completion in no-timing mode, and keeps authored hints separate from puzzle transitions. The case-report type contains episode/version, completion metadata, hint levels, and supplied active time only; it has no room-media fields.
+
+The structured observation ingress enforces an 8 KB JSON envelope, session/device/puzzle/calibration/object-kit binding, monotonic sequences, exact-message dedupe, replay-conflict detection, and revocation. It rejects media keys (including camelCase variants) and companion `puzzle.complete`, emits metadata-only security events, and exposes fallback after invalidation. Stable messages remain proposals requiring authoritative TV hold verification; no ingress path commits a puzzle.
 
 The value-only snapshot store uses a versioned bounded binary format, SHA-256 integrity checks, atomic replacement, and semantic remote-state validation. Tests prove reopen through a new store/session with retained hints, completions, and active time; unchanged-state byte determinism; rejection of malformed/checksum/trailing/camera-bearing state; and preservation of the prior file after invalid saves. Transient hold starts are deliberately not persisted, and a reopen test proves the full hold duration cannot be bypassed. Walking/test directories are removed.
 

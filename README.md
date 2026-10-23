@@ -6,13 +6,13 @@ Five independent hackathon project workspaces, each with its own specification, 
 
 | Project | Track | Current local implementation | Verified local checks |
 | --- | --- | --- | --- |
-| [AccessHold](./projects/accesshold/) | Alexa+ | Manual activation, fixture persistence, ReferenceTravel change dedupe/versioning, and recovery timelines | 30 tests; lint/types/build/audit/fixture |
-| [CurioLab](./projects/curiolab/) | Fire TV | Manual measured episode flow and atomic fixture-file snapshot reopen | 26 tests; lint/types/build/audit/fixture |
-| [NextTime](./projects/nexttime/) | Bee | Consent-aware minimization, learner review/correction, and one-time confirmed-breakdown skill updates | 46 tests; 96.77% branch-aware coverage; build/audit/fixture |
-| [HarvestGrid](./projects/harvestgrid/) | Ring | Forecast/matching/operations plus verified weights, non-sensitive receipts, and outcome evaluation | 38 tests; 92.78% branch-aware coverage; build/audit/fixture |
-| [RoomSmith](./projects/roomsmith/) | Fire TV | Ordered remote episodes, hints, metadata-only reports, and atomic fixture-file snapshot reopen | 32 tests; lint/types/build/audit/fixture |
+| [AccessHold](./projects/accesshold/) | Alexa+ | Manual activation, fixture persistence, ReferenceTravel change dedupe/versioning, recovery timelines, and plan-bound fixture recovery | 35 tests; lint/types/build/audit/fixture |
+| [CurioLab](./projects/curiolab/) | Fire TV | Manual measured episode flow, structured calibration/stable-count observations, and atomic fixture-file snapshot reopen | 31 tests; lint/types/build/audit/fixture |
+| [NextTime](./projects/nexttime/) | Bee | Consent-aware minimization, learner review/correction, one-time confirmed-breakdown skill updates, and deterministic rehearsal | 53 tests; 94.30% branch-aware coverage; build/audit/fixture |
+| [HarvestGrid](./projects/harvestgrid/) | Ring | Forecast/matching/operations plus verified weights, non-sensitive receipts, outcome evaluation, and synthetic evaluation aggregates | 44 tests; 93.31% branch-aware coverage; build/audit/fixture |
+| [RoomSmith](./projects/roomsmith/) | Fire TV | Ordered remote episodes, structured observation ingress, hints, metadata-only reports, and atomic fixture-file snapshot reopen | 38 tests; lint/types/build/audit/fixture |
 
-**These are independent domain/fixture slices, not five completed applications.** The aggregate local suite contains 172 tests. No live sponsor integration, real observation, device demo, user study, operational model, deployment, or release approval is claimed. External credentials, devices, datasets, partnerships, human approvals, and unavailable native toolchains remain explicit blockers in each project's `docs/preflight.md`.
+**These are independent domain/fixture slices, not five completed applications.** The aggregate local suite contains 201 tests. No live sponsor integration, real observation, device demo, user study, operational model, deployment, or release approval is claimed. External credentials, devices, datasets, partnerships, human approvals, and unavailable native toolchains remain explicit blockers in each project's `docs/preflight.md`.
 
 ### Run locally
 

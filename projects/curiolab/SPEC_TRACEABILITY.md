@@ -1,6 +1,6 @@
 # CurioLab — Specification Traceability
 
-**Status:** local manual-episode and atomic fixture-snapshot slices validated; most requirements remain incomplete
+**Status:** local manual-episode, structured-perception, and atomic fixture-snapshot slices validated; most requirements remain incomplete
 **Coverage:** 56 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -25,9 +25,9 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-CL-002` | Present adult consent, safety, privacy, accessibility, and camera choices before the first lab. | `in_progress` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test` | — |
 | `FR-CL-003` | Pair one companion to a TV session using a short-lived code and scoped credentials. | `not_started` | — | — | — |
 | `FR-CL-004` | Record a prediction before displaying the corresponding experimental result. | `implemented` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
-| `FR-CL-005` | Guide the exact paper-bridge protocol and verify calibration before camera-assisted counting. | `not_started` | — | — | — |
-| `FR-CL-006` | Produce a stable observed coin count with confidence and occlusion/error states on the companion. | `not_started` | — | — | — |
-| `FR-CL-007` | Freeze the count on the adult's collapse action and require family confirmation or correction before use. | `implemented` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test` | — |
+| `FR-CL-005` | Guide the exact paper-bridge protocol and verify calibration before camera-assisted counting. | `in_progress` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |
+| `FR-CL-006` | Produce a stable observed coin count with confidence and occlusion/error states on the companion. | `in_progress` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |
+| `FR-CL-007` | Freeze the count on the adult's collapse action and require family confirmation or correction before use. | `implemented` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt`<br>`packages/perception/src/index.ts` | `packages/episode-engine/src/test`<br>`tests/unit/perception.test.ts` | — |
 | `FR-CL-008` | Allow complete manual-remote measurement and non-camera completion. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
 | `FR-CL-009` | Evaluate graph branches deterministically from confirmed predictions and measurements. | `implemented` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `FR-CL-010` | Render scenes with actual measured parameters; do not substitute a canned success value. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
@@ -47,10 +47,10 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `NFR-CL-002` | p95 stable-observation-to-scene latency below 700 ms online, measured on reference hardware and a 50 ms RTT network. | `not_started` | — | — | — |
 | `NFR-CL-003` | Scene branch computation below 16 ms and never waits on a model call. | `not_started` | — | — | — |
 | `NFR-CL-004` | A network/Bedrock outage does not block remote-only episode completion. | `not_started` | — | — | — |
-| `NFR-CL-005` | Camera-assisted count is within ±1 coin of confirmed ground truth in at least 95% of valid controlled-protocol test runs; invalid setups must request recalibration. | `not_started` | — | — | — |
+| `NFR-CL-005` | Camera-assisted count is within ±1 coin of confirmed ground truth in at least 95% of valid controlled-protocol test runs; invalid setups must request recalibration. | `in_progress` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts` | — |
 | `NFR-CL-006` | No raw frame, raw audio, or child name is written to application logs or cloud analytics. | `not_started` | — | — | — |
 | `SEC-CL-001` | No child account, name, precise location, advertising ID, or behavioral advertising profile. | `not_started` | — | — | — |
-| `SEC-CL-002` | Raw frames remain in companion memory; cloud message tests reject image/audio fields. | `not_started` | — | — | — |
+| `SEC-CL-002` | Raw frames remain in companion memory; cloud message tests reject image/audio fields. | `in_progress` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts` | — |
 | `SEC-CL-003` | Voice requires push-to-talk and visible state; no wake-word or background microphone service. | `not_started` | — | — | — |
 | `SEC-CL-004` | Pairing tokens are scoped to one session/device and revoked on completion, adult action, or 12-hour expiry. | `not_started` | — | — | — |
 | `SEC-CL-005` | Anonymous session snapshots delete after 7 days; deletion request covers snapshots, hints, and transient voice records. | `not_started` | — | — | — |
@@ -61,9 +61,9 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-CL-002` | Given an expired pairing code, when exchanged, then pairing fails without creating credentials. | `not_started` | — | — | — |
 | `AC-CL-003` | Given a second companion using an already consumed code, when pairing, then it is denied. | `not_started` | — | — | — |
 | `AC-CL-004` | Given no prediction, when the lab result is requested, then the engine remains at prediction. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
-| `AC-CL-005` | Given missing/misaligned mat markers, when counting, then calibration blocks stable observations. | `not_started` | — | — | — |
-| `AC-CL-006` | Given a stationary valid coin for less than 500 ms, when frames arrive, then it is not added to the stable count. | `not_started` | — | — | — |
-| `AC-CL-007` | Given tracker overlap/occlusion, when confidence drops, then `needs_review` appears and no guessed count is committed. | `not_started` | — | — | — |
+| `AC-CL-005` | Given missing/misaligned mat markers, when counting, then calibration blocks stable observations. | `implemented` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |
+| `AC-CL-006` | Given a stationary valid coin for less than 500 ms, when frames arrive, then it is not added to the stable count. | `implemented` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |
+| `AC-CL-007` | Given tracker overlap/occlusion, when confidence drops, then `needs_review` appears and no guessed count is committed. | `implemented` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |
 | `AC-CL-008` | Given observed count 5 and adult correction to 4, when confirmed, then all scenes/branches use 4. | `implemented` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-CL-009` | Given manual remote mode, when both trials complete, then the entire episode works without camera/network. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
 | `AC-CL-010` | Given flat=3 and folded=7, when comparing, then greater branch and exact values render. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |

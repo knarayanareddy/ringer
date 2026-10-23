@@ -1,7 +1,7 @@
 # RoomSmith
 
 **Track:** Fire TV
-**Status:** ordered remote-episode slice and content-compiler foundation validated locally; Fire OS/companion applications not implemented
+**Status:** ordered remote-episode, structured-observation-ingress, and content-compiler foundations validated locally; Fire OS/companion applications not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
 RoomSmith is a physical-digital escape-room concept. Its deterministic engine, not the companion or a model, owns puzzle completion; remote fallbacks use the same committed state.
@@ -12,7 +12,7 @@ Requirements: Node.js 22, Corepack, `make`, and a Java 17 runtime for the pure K
 
 ```bash
 make setup                 # install and create .env.local from safe examples
-make dev                   # three-puzzle remote-state fixture; no devices/cloud
+make dev                   # structured ingress + three-puzzle remote-state fixtures; no devices/cloud
 make lint typecheck
 make test-unit test-contract test-security
 corepack pnpm validate:content
@@ -29,6 +29,8 @@ Draft content validation checks graph and fallback semantics only. `--publish` r
 | [`schemas/puzzle-graph.schema.json`](./schemas/puzzle-graph.schema.json) | Canonical puzzle/content contract |
 | [`packages/puzzle-engine/`](./packages/puzzle-engine/) | Holds, thresholds, ordered remote episodes, stale rejection, hints, atomic fixture-file snapshots, and metadata-only reports |
 | [`packages/content-compiler/`](./packages/content-compiler/) | Schema/graph/fallback and publication-preflight checks |
+| [`packages/session-contracts/`](./packages/session-contracts/) | Bounded structured observation ingress, replay/media rejection, and fallback signals; no transport |
+| [`scripts/walking-observations.ts`](./scripts/walking-observations.ts) | Labeled synthetic observation-ingress walking fixture |
 | [`content/episodes/light-the-last-lighthouse/`](./content/episodes/light-the-last-lighthouse/) | Draft content copy and pending reviews |
 | [`scripts/validate-content.ts`](./scripts/validate-content.ts) | Explicit draft/publication-preflight CLI |
 | [`tests/`](./tests/) | TypeScript and Kotlin unit/contract/security checks |

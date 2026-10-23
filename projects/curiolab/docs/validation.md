@@ -8,19 +8,21 @@ Recorded 2026-10-23 on the local vertical-slice branch. Evidence covers pure Kot
 | --- | --- |
 | ESLint + Prettier | Passed |
 | TypeScript strict typecheck + Kotlin main/test compilation | Passed |
-| TypeScript unit tests | 4/4 passed |
+| TypeScript unit tests | 9/9 passed: 4 episode-graph and 5 structured-perception tests |
 | Kotlin episode-engine tests | 17/17 passed |
 | Canonical schema/contract tests | 4/4 passed; schema copy byte-identical |
 | Content-publication security test | 1/1 passed |
 | npm audit, moderate and above | No known vulnerabilities |
 | TypeScript build + Kotlin runtime JAR build | Passed |
 | Draft content CLI | Valid in `draft-development` mode |
-| Fixture walking path | Manual consent, stop 5/correct to 4, folded 7, greater branch, reflection, two atomic fixture-file saves/reopens through new stores/sessions |
-| **Total tests** | **26/26 passed** |
+| Fixture walking path | Structured calibration/stable-count/stop fixture plus manual consent, stop 5/correct to 4, folded 7, greater branch, reflection, two atomic fixture-file saves/reopens through new stores/sessions |
+| **Total tests** | **31/31 passed** |
 
 The manual coordinator requires safety/consent before predictions, an adult-marked stop before confirmation, and a confirmed count before result parameters or comparison. Duplicate stops/confirmations are idempotent, stale sequences and counts outside the episode's 0–30 bounds fail, and the final summary requires reflection and preserves a variable-change prompt rather than asserting a universal law.
 
 The versioned value-only snapshot format uses size/count limits, SHA-256 integrity checks, semantic validation, and atomic replacement. Tests prove deterministic bytes for an unchanged snapshot, reopen through a new store and session, continuation to the same measured summary, and fail-closed handling of bad magic/version/checksum, truncation, trailing bytes, and invalid state. Walking/test directories are removed.
+
+The structured perception fixture rejects missing markers, reprojection error above 8 px, and occlusion above 1,000 ms. It requires 0.65 confidence, 12 px maximum center drift, and 500 ms stability; duplicate frames are ignored, review flags never create a guessed count, and adult stop returns an awaiting-family-confirmation snapshot. The API accepts structured detections only and does not commit a TV measurement or persist raw media.
 
 The publication CLI was also run with `--publish` and correctly exited nonzero. It reported missing science/child-safety reviews, unapproved review state, and placeholder graph/asset hashes. This negative check is expected for the current draft.
 

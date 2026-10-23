@@ -7,19 +7,21 @@ Recorded 2026-10-23. Project tests, builds, fixture execution, and dependency au
 | Check | Result |
 | --- | --- |
 | Ruff lint + format check | Passed |
-| Strict mypy | Passed; 9 source files |
-| Unit tests | 38/38 passed |
-| Branch-aware domain coverage | 96.77%; required gate 90% retained |
+| Strict mypy | Passed; 10 source files |
+| Unit tests | 45/45 passed |
+| Branch-aware domain coverage | 94.30%; required gate 90% retained |
 | Canonical schema/contract tests | 6/6 passed; schema copy byte-identical |
 | Privacy/security tests | 2/2 passed |
 | Third-party dependency audit | No known vulnerabilities; editable local package skipped |
 | Source distribution + wheel | Both built successfully |
-| Fixture walking path | Consent-aware minimization, duplicate-source safety, unconfirmed no-update outcome, and a separate reviewed copy with one confirmation-skill update |
-| **Total tests** | **46/46 passed** |
+| Fixture walking path | Consent-aware minimization, duplicate-source safety, unconfirmed no-update outcome, a separate reviewed copy with one confirmation-skill update, and a 90-second/two-turn rehearsal with quiet-hours scheduling and duplicate-safe fixture notification requests |
+| **Total tests** | **53/53 passed** |
 
 The synthetic transcript path excludes other-speaker and ambiguous turns, excludes other-speaker-like turns from self memos, applies narrow deterministic identifier redaction, and always returns `review_required`. Cached source references remain subject to consent and revocation checks. The source deletion deadline is computed as 24 hours after successful minimization; it is metadata for a future deletion adapter, not proof of deletion.
 
 The original rubric fixture still returns `partial`, `confirmation_required: true`, `required_confirmation_unresolved`, and `authentic_skill_update: false`. A separate in-memory reviewed copy requires every proposed breakdown to be reviewed before attempt confirmation, recomputes corrected criterion outcomes, and applies confirmed breakdown-skill updates once per skill. Tests prove rejected breakdowns and unknown outcomes do not update mastery, contradictory confirmation evidence fails, duplicate confirmation does not reapply updates, and cross-learner/stale-version access fails. No authentic learner outcome is inferred.
+
+The deterministic rehearsal service targets only a confirmed `confirmation_missing` breakdown, requires a learner-marked recurrence, and offers an explicit quiet-hours choice. Its fixture notification is `fixture_request_not_sent`; duplicate notification/turn events are safe, ambiguous turns progress through repair/easier-alternative support to abandonment, and text/tap modes are supported. Completing the two-turn rehearsal leaves authentic skill states unchanged. No audio, iOS, Bedrock, Polly, actual notification, or learning outcome is claimed.
 
 ## Reproduce
 
@@ -31,4 +33,4 @@ Use a Python 3.12 runtime with zlib, SQLite, and SSL/TLS so the normal coverage 
 
 ## Not evidenced
 
-No Bee/Apple Watch data, CLI/MCP ingestion, diarization model, iOS behavior, authentic transcript, actual transient deletion, revocation worker, durable learner/attempt/idempotency store, database scan, rehearsal targeting/audio, ASR accent/device evaluation, participant outcome, performance, deployment, or release behavior was executed. Confirmed-breakdown updates are deliberately narrow; criterion-wide progress, recurrence comparison, rehearsal targeting, and deletion adapters remain incomplete. The build-complete gate remains open.
+No Bee/Apple Watch data, CLI/MCP ingestion, diarization model, iOS behavior, authentic transcript, actual transient deletion, revocation worker, durable learner/attempt/idempotency store, database scan, rehearsal targeting/audio, ASR accent/device evaluation, participant outcome, performance, deployment, or release behavior was executed. Confirmed-breakdown updates are deliberately narrow; criterion-wide progress, recurrence comparison, native rehearsal audio/notification delivery, and deletion adapters remain incomplete. The build-complete gate remains open.

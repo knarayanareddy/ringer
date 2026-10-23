@@ -8,7 +8,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "./scripts/kotlin.sh run",
+    "dev": "tsx scripts/walking-observations.ts && ./scripts/kotlin.sh run",
     "build": "tsc -p tsconfig.build.json && ./scripts/kotlin.sh build",
     "lint": "eslint packages scripts tests && prettier --check \"packages/**/*.ts\" \"scripts/**/*.ts\" \"tests/**/*.ts\" \"*.{json,mjs}\"",
     "typecheck": "tsc --noEmit && ./scripts/kotlin.sh typecheck",

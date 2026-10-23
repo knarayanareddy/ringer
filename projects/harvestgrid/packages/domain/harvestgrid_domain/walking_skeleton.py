@@ -7,9 +7,16 @@ from typing import Any
 
 from harvestgrid_domain_matching import Candidate, HardConstraints, RankingFeatures
 
+from .evaluation import ReviewedEvaluationSet, evaluate_model_data_gate
 from .forecast import validate_harvest_window
 from .operations import GleanWorkflow, RestrictedLocation
-from .outcomes import CompletionEntry, RejectionReason, WeightEntry, WeightSource
+from .outcomes import (
+    CompletionEntry,
+    RejectionReason,
+    WeightEntry,
+    WeightRecord,
+    WeightSource,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 T0 = datetime(2026, 10, 23, 12, 0, tzinfo=UTC)
@@ -134,6 +141,42 @@ def main() -> None:
     if verified.forecast_evaluation is None:
         raise AssertionError("Forecast evaluation is required")
 
+    evaluation_set = ReviewedEvaluationSet(
+        manifest_sha256="d" * 64,
+        review_attested=True,
+    )
+    evaluation_set.add(
+        example_id="fixture-outcome-1",
+        forecast_document=document,
+        record=verified.weight_record,
+        actual_harvested_at=entry.actual_harvested_at,
+        visible_fruit_count=entry.visible_fruit_count,
+    )
+    second_harvest = datetime(2026, 11, 5, 8, 0, tzinfo=UTC)
+    second_record = WeightRecord(
+        glean_id="glean-fixture-2",
+        entry=entry.weight,
+        entered_by="coordinator-fixture",
+        entered_at=second_harvest,
+        coordinator_verified=True,
+        verified_by="coordinator-fixture",
+        verified_at=second_harvest + timedelta(minutes=5),
+    )
+    evaluation_set.add(
+        example_id="fixture-outcome-2",
+        forecast_document=document,
+        record=second_record,
+        actual_harvested_at=second_harvest,
+        visible_fruit_count=42,
+    )
+    aggregate = evaluation_set.aggregate()
+    data_gate = evaluate_model_data_gate(
+        tree_season_sequences=2,
+        site_count=1,
+        held_out_site_split=False,
+        held_out_season_split=False,
+    )
+
     print(
         json.dumps(
             {
@@ -167,10 +210,16 @@ def main() -> None:
                 "automatic_model_promotion": (
                     verified.forecast_evaluation.automatic_model_promotion
                 ),
+                "evaluation_set": aggregate.as_non_sensitive_dict(),
+                "non_experimental_model_review_eligible": (
+                    data_gate.eligible_for_non_experimental_model_review
+                ),
+                "model_data_gate_reasons": data_gate.reason_codes,
                 "notice": (
-                    "Separate in-memory revocation and coordinator-verified outcome fixtures only; "
-                    "no actual invitation, residential location, glean, donation, deletion job, "
-                    "model promotion, or operational outcome is claimed."
+                    "Separate in-memory revocation, coordinator-verified outcomes, and synthetic "
+                    "evaluation aggregation only; no actual invitation, residential location, "
+                    "glean, donation, human manifest review, held-out model evaluation, deletion "
+                    "job, model promotion, or operational outcome is claimed."
                 ),
             },
             indent=2,
