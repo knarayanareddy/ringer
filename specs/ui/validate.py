@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free structural, link, token, and contrast checks for the UI pack."""
+"""Dependency-free workspace, structural, link, token, and contrast checks."""
 
 from __future__ import annotations
 
@@ -13,14 +13,17 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent
+REPO_ROOT = ROOT.parent.parent
+WORKSPACES = REPO_ROOT / "projects"
 PROJECTS = {
-    "accesshold": {"name": "AccessHold", "screens": 5, "platforms": {"responsive_web", "alexa_rich_card"}},
-    "curiolab": {"name": "CurioLab", "screens": 6, "platforms": {"fire_tv_1080p", "android_companion"}},
-    "nexttime": {"name": "NextTime", "screens": 5, "platforms": {"ios", "accessibility_text_sizes"}},
-    "harvestgrid": {"name": "HarvestGrid", "screens": 4, "platforms": {"responsive_web", "outdoor_mobile"}},
-    "roomsmith": {"name": "RoomSmith", "screens": 5, "platforms": {"fire_tv_1080p", "android_companion"}},
+    "accesshold": {"name": "AccessHold", "screens": 5, "platforms": {"responsive_web", "alexa_rich_card"}, "schema": "access-contract.schema.json", "example": "access-contract.example.json"},
+    "curiolab": {"name": "CurioLab", "screens": 6, "platforms": {"fire_tv_1080p", "android_companion"}, "schema": "episode.schema.json", "example": "episode.example.json"},
+    "nexttime": {"name": "NextTime", "screens": 5, "platforms": {"ios", "accessibility_text_sizes"}, "schema": "real-world-attempt.schema.json", "example": "real-world-attempt.example.json"},
+    "harvestgrid": {"name": "HarvestGrid", "screens": 4, "platforms": {"responsive_web", "outdoor_mobile"}, "schema": "harvest-window.schema.json", "example": "harvest-window.example.json"},
+    "roomsmith": {"name": "RoomSmith", "screens": 5, "platforms": {"fire_tv_1080p", "android_companion"}, "schema": "puzzle-graph.schema.json", "example": "puzzle-graph.example.json"},
 }
-REQUIRED_PROJECT_FILES = {"PRODUCT.md", "DESIGN.md", "WIREFRAMES.md", "tokens.json", "wireframe.html", "theme.css"}
+REQUIRED_WORKSPACE_FILES = {"AGENTS.md", "README.md", "SPEC.md", "SPEC_TRACEABILITY.md", "SPEC_DEVIATIONS.md"}
+REQUIRED_UI_FILES = {"PRODUCT.md", "DESIGN.md", "WIREFRAMES.md", "tokens.json", "wireframe.html", "theme.css"}
 REQUIRED_SHARED_FILES = {"README.md", "FOUNDATIONS.md", "TOOLING.md", "index.html", "index.css", "wireframes.css", "wireframes.js"}
 TOKEN_VARIABLES = {
     "canvas": "color.canvas",
@@ -41,6 +44,26 @@ TOKEN_VARIABLES = {
 }
 HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
 MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
+REQUIREMENT_ID_RE = re.compile(r"\b(?:FR|INT|NFR|SEC|AC)-[A-Z]+-[A-Z0-9-]+\b")
+
+
+def project_ui(slug: str) -> Path:
+    return WORKSPACES / slug / "ui"
+
+
+def display(path: Path) -> str:
+    return str(path.resolve().relative_to(REPO_ROOT))
+
+
+def load_json_without_duplicates(path: Path) -> dict:
+    def no_duplicates(pairs: list[tuple[str, object]]) -> dict:
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON key {key!r}")
+            result[key] = value
+        return result
+    return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=no_duplicates)
 
 
 class PageParser(HTMLParser):
@@ -128,48 +151,84 @@ def local_target(source: Path, reference: str) -> tuple[Path | None, str, bool]:
     return target, unquote(parsed.fragment), False
 
 
+def validate_workspaces(errors: list[str], report: dict) -> None:
+    report["workspaces"] = {}
+    for slug, expected in PROJECTS.items():
+        workspace = WORKSPACES / slug
+        for name in sorted(REQUIRED_WORKSPACE_FILES):
+            if not (workspace / name).is_file():
+                errors.append(f"Missing workspace artifact {display(workspace / name)}")
+        for name in sorted(REQUIRED_UI_FILES):
+            if not (project_ui(slug) / name).is_file():
+                errors.append(f"Missing project UI artifact {display(project_ui(slug) / name)}")
+        for kind in ("schema", "example"):
+            directory = "schemas" if kind == "schema" else "examples"
+            path = workspace / directory / expected[kind]
+            if not path.is_file():
+                errors.append(f"Missing canonical {kind} {display(path)}")
+                continue
+            try:
+                load_json_without_duplicates(path)
+            except (OSError, json.JSONDecodeError, ValueError) as exc:
+                errors.append(f"{display(path)}: invalid JSON: {exc}")
+        spec_path = workspace / "SPEC.md"
+        trace_path = workspace / "SPEC_TRACEABILITY.md"
+        if not spec_path.exists() or not trace_path.exists():
+            continue
+        spec_ids = set(REQUIREMENT_ID_RE.findall(spec_path.read_text(encoding="utf-8")))
+        trace_ids = set(REQUIREMENT_ID_RE.findall(trace_path.read_text(encoding="utf-8")))
+        missing = sorted(spec_ids - trace_ids)
+        extra = sorted(trace_ids - spec_ids)
+        if missing or extra:
+            errors.append(f"{display(trace_path)}: ID coverage mismatch; missing={missing}, extra={extra}")
+        report["workspaces"][slug] = {"requirement_ids": len(spec_ids), "traceability_ids": len(trace_ids)}
+    report["requirement_total"] = sum(item["requirement_ids"] for item in report["workspaces"].values())
+    if report["requirement_total"] != 284:
+        errors.append(f"Expected 284 canonical requirement/acceptance IDs, found {report['requirement_total']}")
+
+
 def validate_tokens(errors: list[str], report: dict) -> None:
     report["contrast"] = {}
     for slug, expected in PROJECTS.items():
-        path = ROOT / slug / "tokens.json"
+        path = project_ui(slug) / "tokens.json"
         try:
-            tokens = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
-            errors.append(f"{path.relative_to(ROOT)}: unreadable token JSON: {exc}")
+            tokens = load_json_without_duplicates(path)
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            errors.append(f"{display(path)}: unreadable token JSON: {exc}")
             continue
         meta = tokens.get("meta", {})
         if meta.get("project") != expected["name"]:
-            errors.append(f"{slug}/tokens.json: meta.project does not match {expected['name']}")
+            errors.append(f"{display(path)}: meta.project does not match {expected['name']}")
         if set(meta.get("platforms", [])) != expected["platforms"]:
-            errors.append(f"{slug}/tokens.json: platform set differs from the approved surface contract")
+            errors.append(f"{display(path)}: platform set differs from the approved surface contract")
         for category in ("color", "typography", "spacing", "shape", "motion", "layout"):
             if category not in tokens:
-                errors.append(f"{slug}/tokens.json: missing {category} token group")
+                errors.append(f"{display(path)}: missing {category} token group")
         for category, group in tokens.items():
             if category == "meta":
                 continue
             if not isinstance(group, dict):
-                errors.append(f"{slug}/tokens.json: {category} must be an object")
+                errors.append(f"{display(path)}: {category} must be an object")
                 continue
             for name, token in group.items():
                 if not isinstance(token, dict) or not token.get("$type") or "$value" not in token:
-                    errors.append(f"{slug}/tokens.json: {category}.{name} lacks $type/$value")
+                    errors.append(f"{display(path)}: {category}.{name} lacks $type/$value")
                 elif token["$type"] == "color" and not HEX_RE.match(str(token["$value"])):
-                    errors.append(f"{slug}/tokens.json: {category}.{name} is not a six-digit hex color")
-        theme_path = ROOT / slug / "theme.css"
+                    errors.append(f"{display(path)}: {category}.{name} is not a six-digit hex color")
+        theme_path = project_ui(slug) / "theme.css"
         theme = theme_path.read_text(encoding="utf-8") if theme_path.exists() else ""
         variables = dict(re.findall(r"--([\w-]+)\s*:\s*(#[0-9A-Fa-f]{6})", theme))
         for variable, token_path in TOKEN_VARIABLES.items():
             try:
                 token_color = str(token_value(tokens, token_path)).lower()
             except ValueError as exc:
-                errors.append(f"{slug}/tokens.json: {exc}")
+                errors.append(f"{display(path)}: {exc}")
                 continue
             if variables.get(variable, "").lower() != token_color:
-                errors.append(f"{slug}/theme.css: --{variable} must match {token_path} ({token_color})")
+                errors.append(f"{display(theme_path)}: --{variable} must match {token_path} ({token_color})")
         pairs = meta.get("contrast_pairs", {})
         if len(pairs) < 10:
-            errors.append(f"{slug}/tokens.json: expected at least 10 declared contrast pairs")
+            errors.append(f"{display(path)}: expected at least 10 declared contrast pairs")
         project_results = {}
         for name, pair in pairs.items():
             try:
@@ -187,20 +246,20 @@ def validate_tokens(errors: list[str], report: dict) -> None:
                     "pass": ratio >= minimum,
                 }
                 if ratio < minimum:
-                    errors.append(f"{slug}/tokens.json: {name} contrast {ratio:.2f}:1 is below {minimum}:1")
+                    errors.append(f"{display(path)}: {name} contrast {ratio:.2f}:1 is below {minimum}:1")
             except (KeyError, TypeError, ValueError) as exc:
-                errors.append(f"{slug}/tokens.json: invalid contrast pair {name}: {exc}")
+                errors.append(f"{display(path)}: invalid contrast pair {name}: {exc}")
         report["contrast"][slug] = project_results
 
 
 def validate_html(errors: list[str], report: dict) -> None:
-    pages = [ROOT / "index.html", *(ROOT / slug / "wireframe.html" for slug in PROJECTS)]
+    pages = [ROOT / "index.html", *(project_ui(slug) / "wireframe.html" for slug in PROJECTS)]
     parsed_pages: dict[Path, PageParser] = {}
     for page in pages:
         parser = PageParser()
         parser.feed(page.read_text(encoding="utf-8"))
         parsed_pages[page.resolve()] = parser
-        relative = page.relative_to(ROOT)
+        relative = display(page)
         duplicates = [item for item, count in Counter(parser.ids).items() if count > 1]
         if duplicates:
             errors.append(f"{relative}: duplicate IDs {duplicates}")
@@ -220,7 +279,7 @@ def validate_html(errors: list[str], report: dict) -> None:
             if target not in parser.ids:
                 errors.append(f"{relative}: {attr} references missing ID {target}")
         if page.name == "wireframe.html":
-            slug = page.parent.name
+            slug = page.parent.parent.name
             expected_count = PROJECTS[slug]["screens"]
             if len(parser.wireframe_ids) != expected_count:
                 errors.append(f"{relative}: expected {expected_count} screens, found {len(parser.wireframe_ids)}")
@@ -228,7 +287,7 @@ def validate_html(errors: list[str], report: dict) -> None:
             if "static review artifact" not in text or "fictional" not in text:
                 errors.append(f"{relative}: missing static/fictional scope disclosure")
     for page, parser in parsed_pages.items():
-        relative = page.relative_to(ROOT)
+        relative = display(page)
         for tag, attr, reference in parser.references:
             if not reference or reference == "#":
                 errors.append(f"{relative}: empty {tag} {attr} reference")
@@ -249,7 +308,7 @@ def validate_html(errors: list[str], report: dict) -> None:
                 if target_parser is not None and fragment not in target_parser.ids:
                     errors.append(f"{relative}: {reference} targets a missing fragment")
     report["html"] = {
-        str(page.relative_to(ROOT)): {
+        display(page): {
             "screens": len(parser.wireframe_ids),
             "ids": len(parser.ids),
             "references": len(parser.references),
@@ -262,8 +321,8 @@ def validate_html(errors: list[str], report: dict) -> None:
 
 def validate_markdown(errors: list[str], report: dict) -> None:
     checked = 0
-    for document in sorted(ROOT.glob("**/*.md")):
-        if "node_modules" in document.parts:
+    for document in sorted(REPO_ROOT.glob("**/*.md")):
+        if "node_modules" in document.parts or ".git" in document.parts:
             continue
         text = document.read_text(encoding="utf-8")
         for match in MARKDOWN_LINK_RE.finditer(text):
@@ -275,7 +334,7 @@ def validate_markdown(errors: list[str], report: dict) -> None:
             checked += 1
             assert target is not None
             if not target.exists():
-                errors.append(f"{document.relative_to(ROOT)}: missing Markdown target {target_text}")
+                errors.append(f"{display(document)}: missing Markdown target {target_text}")
     report["markdown_local_links"] = checked
 
 
@@ -288,10 +347,7 @@ def main() -> int:
     for name in sorted(REQUIRED_SHARED_FILES):
         if not (ROOT / name).is_file():
             errors.append(f"Missing shared artifact {name}")
-    for slug in PROJECTS:
-        for name in sorted(REQUIRED_PROJECT_FILES):
-            if not (ROOT / slug / name).is_file():
-                errors.append(f"Missing project artifact {slug}/{name}")
+    validate_workspaces(errors, report)
     validate_tokens(errors, report)
     validate_html(errors, report)
     validate_markdown(errors, report)
@@ -307,6 +363,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
     contrast_count = sum(len(items) for items in report["contrast"].values())
+    print(f"PASS: 5 agent workspaces and {report['requirement_total']} traceable requirement/acceptance IDs")
     print(f"PASS: 5 token files and {contrast_count} contrast pairs")
     print(f"PASS: 6 HTML pages, {report['screen_total']} screens, local links/fragments, and static-control contracts")
     print(f"PASS: {report['markdown_local_links']} local Markdown links")

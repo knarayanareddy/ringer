@@ -1,10 +1,10 @@
 # NextTime — Implementation Specification
 
-**Specification version:** 1.0.0  
-**Primary track:** Bee  
-**Project status:** ready for implementation; no code is implied  
-**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](./SHARED_ENGINEERING_STANDARD.md), [real-world-attempt.schema.json](./schemas/nexttime/real-world-attempt.schema.json)  
-**Validated example:** [real-world-attempt.example.json](./examples/nexttime/real-world-attempt.example.json)
+**Specification version:** 1.0.0
+**Primary track:** Bee
+**Project status:** ready for implementation; no code is implied
+**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](../../specs/SHARED_ENGINEERING_STANDARD.md), [real-world-attempt.schema.json](./schemas/real-world-attempt.schema.json)
+**Validated example:** [real-world-attempt.example.json](./examples/real-world-attempt.example.json)
 
 ## 1. Product contract
 
@@ -78,7 +78,7 @@ Recording is user-initiated for the supported learning workflow. NextTime MUST N
 
 ## 3. Domain model and rubrics
 
-The canonical portable attempt is [real-world-attempt.schema.json](./schemas/nexttime/real-world-attempt.schema.json).
+The canonical portable attempt is [real-world-attempt.schema.json](./schemas/real-world-attempt.schema.json).
 
 ### 3.1 Supporting entities
 

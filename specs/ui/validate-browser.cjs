@@ -9,7 +9,14 @@ const { pathToFileURL } = require("node:url");
 const { chromium: playwrightChromium } = require("playwright-core");
 
 const ROOT = __dirname;
-const PAGES = ["index.html", "accesshold/wireframe.html", "curiolab/wireframe.html", "nexttime/wireframe.html", "harvestgrid/wireframe.html", "roomsmith/wireframe.html"];
+const PAGES = [
+  "index.html",
+  "../../projects/accesshold/ui/wireframe.html",
+  "../../projects/curiolab/ui/wireframe.html",
+  "../../projects/nexttime/ui/wireframe.html",
+  "../../projects/harvestgrid/ui/wireframe.html",
+  "../../projects/roomsmith/ui/wireframe.html",
+];
 const VIEWPORTS = [
   { name: "desktop", width: 1440, height: 1000, reducedMotion: "no-preference" },
   { name: "mobile", width: 390, height: 844, reducedMotion: "reduce" },
@@ -121,7 +128,7 @@ async function checkPage(context, relativePath, viewport, axeSource, screenshotD
   if (externalRequests.length) errors.push(`${externalRequests.length} unexpected external request(s)`);
   let screenshot;
   if (screenshotDir) {
-    const project = relativePath === "index.html" ? "index" : relativePath.split("/")[0];
+    const project = relativePath === "index.html" ? "index" : relativePath.match(/projects\/([^/]+)/)[1];
     screenshot = path.join(screenshotDir, `${project}-${viewport.name}.png`);
     await page.screenshot({ path: screenshot, fullPage: true });
   }

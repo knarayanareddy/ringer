@@ -1,10 +1,10 @@
 # RoomSmith — Implementation Specification
 
-**Specification version:** 1.0.0  
-**Primary track:** Fire TV  
-**Project status:** ready for implementation; no code is implied  
-**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](./SHARED_ENGINEERING_STANDARD.md), [puzzle-graph.schema.json](./schemas/roomsmith/puzzle-graph.schema.json)  
-**Validated draft example:** [puzzle-graph.example.json](./examples/roomsmith/puzzle-graph.example.json)
+**Specification version:** 1.0.0
+**Primary track:** Fire TV
+**Project status:** ready for implementation; no code is implied
+**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](../../specs/SHARED_ENGINEERING_STANDARD.md), [puzzle-graph.schema.json](./schemas/puzzle-graph.schema.json)
+**Validated draft example:** [puzzle-graph.example.json](./examples/puzzle-graph.example.json)
 
 ## 1. Product contract
 
@@ -119,7 +119,7 @@ The TV renders the restored lighthouse and generates a case report containing ep
 
 ## 4. Canonical graph and deterministic engine
 
-The normative content contract is [puzzle-graph.schema.json](./schemas/roomsmith/puzzle-graph.schema.json).
+The normative content contract is [puzzle-graph.schema.json](./schemas/puzzle-graph.schema.json).
 
 ### 4.1 Runtime state
 

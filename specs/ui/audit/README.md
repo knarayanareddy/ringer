@@ -1,13 +1,21 @@
 # UI Audit Findings and Resolution
 
 **Audit date:** October 23, 2026
-**Scope:** six HTML pages, shared/project CSS and JavaScript, five token files, and local documentation links
+**Scope:** five agent workspaces, six HTML pages, shared/project CSS and JavaScript, five schemas/examples and token files, and repository documentation links
 **Final automated status:** passed
+
+## Workspace reorganization verification
+
+- Five independent `projects/<name>/` workspaces contain their agent entry point, specification, schema/example, UI pack, and traceability/deviation registers.
+- All **284/284** requirement and acceptance IDs match between the canonical specifications and traceability registers.
+- All five moved schemas pass Draft 2020-12 structural checks, and all five moved examples validate with format checking.
+- Static validation covers **252** repository-local Markdown links after the move.
 
 ## Final results
 
 | Check | Result | Evidence |
 | --- | --- | --- |
+| Agent workspaces and traceability | 5 workspaces, 284/284 IDs matched, canonical JSON files present and duplicate-free | [static.json](./static.json) |
 | Token structure and declared WCAG contrast pairs | 5 files, 50/50 pairs passed | [static.json](./static.json) |
 | Theme/token agreement | All semantic colors match their project tokens | [static.json](./static.json) |
 | HTML/local-link/static-control validation | 6 pages, 25 screens, no missing local targets or external runtime dependencies | [static.json](./static.json) |

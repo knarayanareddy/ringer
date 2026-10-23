@@ -4,7 +4,7 @@
 **Date:** October 23, 2026
 **Scope:** design systems, component behavior, design tokens, and low-fidelity browser wireframes for all five projects
 
-This directory completes the design layer that was intentionally absent from the implementation specifications. It does not add production applications or imply that high-fidelity visual design, device testing, or user research has been completed.
+This directory contains shared design foundations, browser review, and validation. Project-owned UI artifacts live in `projects/<name>/ui/`. Nothing here adds production applications or implies that high-fidelity visual design, device testing, or user research has been completed.
 
 ## Start here
 
@@ -13,7 +13,7 @@ This directory completes the design layer that was intentionally absent from the
 - [Audit findings and resolution](./audit/README.md)
 - [Open the browser wireframe index](./index.html)
 
-Each project contains:
+Each `projects/<name>/ui/` directory contains:
 
 | File | Purpose |
 | --- | --- |
@@ -36,11 +36,11 @@ Shared browser and validation files:
 
 | Project | Product truth | Visual/component system | Screen flows | Tokens | Browser wireframes |
 | --- | --- | --- | --- | --- | --- |
-| AccessHold | [PRODUCT](./accesshold/PRODUCT.md) | [DESIGN](./accesshold/DESIGN.md) | [WIREFRAMES](./accesshold/WIREFRAMES.md) | [tokens](./accesshold/tokens.json) | [open](./accesshold/wireframe.html) |
-| CurioLab | [PRODUCT](./curiolab/PRODUCT.md) | [DESIGN](./curiolab/DESIGN.md) | [WIREFRAMES](./curiolab/WIREFRAMES.md) | [tokens](./curiolab/tokens.json) | [open](./curiolab/wireframe.html) |
-| NextTime | [PRODUCT](./nexttime/PRODUCT.md) | [DESIGN](./nexttime/DESIGN.md) | [WIREFRAMES](./nexttime/WIREFRAMES.md) | [tokens](./nexttime/tokens.json) | [open](./nexttime/wireframe.html) |
-| HarvestGrid | [PRODUCT](./harvestgrid/PRODUCT.md) | [DESIGN](./harvestgrid/DESIGN.md) | [WIREFRAMES](./harvestgrid/WIREFRAMES.md) | [tokens](./harvestgrid/tokens.json) | [open](./harvestgrid/wireframe.html) |
-| RoomSmith | [PRODUCT](./roomsmith/PRODUCT.md) | [DESIGN](./roomsmith/DESIGN.md) | [WIREFRAMES](./roomsmith/WIREFRAMES.md) | [tokens](./roomsmith/tokens.json) | [open](./roomsmith/wireframe.html) |
+| AccessHold | [PRODUCT](../../projects/accesshold/ui/PRODUCT.md) | [DESIGN](../../projects/accesshold/ui/DESIGN.md) | [WIREFRAMES](../../projects/accesshold/ui/WIREFRAMES.md) | [tokens](../../projects/accesshold/ui/tokens.json) | [open](../../projects/accesshold/ui/wireframe.html) |
+| CurioLab | [PRODUCT](../../projects/curiolab/ui/PRODUCT.md) | [DESIGN](../../projects/curiolab/ui/DESIGN.md) | [WIREFRAMES](../../projects/curiolab/ui/WIREFRAMES.md) | [tokens](../../projects/curiolab/ui/tokens.json) | [open](../../projects/curiolab/ui/wireframe.html) |
+| NextTime | [PRODUCT](../../projects/nexttime/ui/PRODUCT.md) | [DESIGN](../../projects/nexttime/ui/DESIGN.md) | [WIREFRAMES](../../projects/nexttime/ui/WIREFRAMES.md) | [tokens](../../projects/nexttime/ui/tokens.json) | [open](../../projects/nexttime/ui/wireframe.html) |
+| HarvestGrid | [PRODUCT](../../projects/harvestgrid/ui/PRODUCT.md) | [DESIGN](../../projects/harvestgrid/ui/DESIGN.md) | [WIREFRAMES](../../projects/harvestgrid/ui/WIREFRAMES.md) | [tokens](../../projects/harvestgrid/ui/tokens.json) | [open](../../projects/harvestgrid/ui/wireframe.html) |
+| RoomSmith | [PRODUCT](../../projects/roomsmith/ui/PRODUCT.md) | [DESIGN](../../projects/roomsmith/ui/DESIGN.md) | [WIREFRAMES](../../projects/roomsmith/ui/WIREFRAMES.md) | [tokens](../../projects/roomsmith/ui/tokens.json) | [open](../../projects/roomsmith/ui/wireframe.html) |
 
 ## Design phase exit criteria
 
@@ -57,6 +57,6 @@ This design phase is complete when:
 
 The committed audit reports record 50 passing token contrast pairs, 12 passing Chromium page/viewport combinations with zero axe violations, and a zero-finding Impeccable scan. See [audit findings and limitations](./audit/README.md) before interpreting those results; they do not establish device support, full WCAG conformance, or usability.
 
-## Next phase—not included here
+## Implementation phase—not completed by these artifacts
 
-After selecting one implementation project, create its high-fidelity component library and clickable production-design prototype, run the relevant Fire TV/iOS/Android/web device checks, and test with the intended users. Do not build five high-fidelity applications merely to make the design pack look complete.
+Each agent in `projects/<name>/` uses its local UI contracts while implementing its own specification. High-fidelity refinement, real Fire TV/iOS/Android/web/Alexa device checks, accessibility evaluation, and intended-user testing remain separate required evidence activities. Static wireframes must not be presented as a production frontend or device result.

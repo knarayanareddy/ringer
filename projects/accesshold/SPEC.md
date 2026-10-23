@@ -1,10 +1,10 @@
 # AccessHold — Implementation Specification
 
-**Specification version:** 1.0.0  
-**Primary track:** Alexa+  
-**Project status:** ready for implementation; no code is implied  
-**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](./SHARED_ENGINEERING_STANDARD.md), [access-contract.schema.json](./schemas/accesshold/access-contract.schema.json)  
-**Validated example:** [access-contract.example.json](./examples/accesshold/access-contract.example.json)
+**Specification version:** 1.0.0
+**Primary track:** Alexa+
+**Project status:** ready for implementation; no code is implied
+**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](../../specs/SHARED_ENGINEERING_STANDARD.md), [access-contract.schema.json](./schemas/access-contract.schema.json)
+**Validated example:** [access-contract.example.json](./examples/access-contract.example.json)
 
 ## 1. Product contract
 
@@ -207,7 +207,7 @@ accesshold/
 
 ## 6. Canonical domain model
 
-The normative portable object is [access-contract.schema.json](./schemas/accesshold/access-contract.schema.json). The following tables/indexes support it; they do not replace schema validation.
+The normative portable object is [access-contract.schema.json](./schemas/access-contract.schema.json). The following tables/indexes support it; they do not replace schema validation.
 
 ### 6.1 Relational tables
 

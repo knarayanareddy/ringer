@@ -29,7 +29,7 @@ Useful prompts about TV focus, companion density, state coverage, and semantic t
 
 | Tool | Purpose | Report |
 | --- | --- | --- |
-| Python 3 standard library (`validate.py`) | Required files, token structure, theme/token agreement, 50 contrast pairs, HTML structure, local links/fragments, static controls, Markdown links | [`audit/static.json`](./audit/static.json) |
+| Python 3 standard library (`validate.py`) | Five workspace layouts, canonical JSON syntax/duplicate keys, 284 traceability IDs, token structure, theme/token agreement, 50 contrast pairs, HTML structure, local links/fragments, static controls, repository Markdown links | [`audit/static.json`](./audit/static.json) |
 | Playwright + Chromium (`validate-browser.cjs`) | Real rendering at 1440×1000 and 390×844, reduced motion on mobile-width runs, overflow, 44 px controls, runtime errors, external requests | [`audit/browser.json`](./audit/browser.json) |
 | axe-core 4.14.0 | Automated WCAG-tagged accessibility rules on all 12 page/viewport combinations | Included in `audit/browser.json` |
 | Impeccable 4.7.0 | Deterministic source/HTML/CSS anti-pattern and quality detector | [`audit/impeccable.json`](./audit/impeccable.json) and [`audit/README.md`](./audit/README.md) |
@@ -48,7 +48,7 @@ npm run validate
 
 `npm run validate` runs, in order:
 
-1. `python3 validate.py` — dependency-free static checks;
+1. `python3 validate.py` — dependency-free workspace, contract, traceability, and static UI checks;
 2. `node validate-browser.cjs` — 12 real Chromium renderings plus axe;
 3. `impeccable detect --json …` — the actual HTML/CSS/source set.
 
@@ -82,7 +82,9 @@ UI_SCREENSHOT_DIR=/tmp/ringer-ui-screenshots npm run validate:browser
 cd specs/ui
 npx --yes impeccable@4.7.0 detect --json \
   index.html index.css wireframes.css wireframes.js \
-  accesshold curiolab nexttime harvestgrid roomsmith
+  ../../projects/accesshold/ui ../../projects/curiolab/ui \
+  ../../projects/nexttime/ui ../../projects/harvestgrid/ui \
+  ../../projects/roomsmith/ui
 ```
 
 The detector exits nonzero when findings exist. Its result supplements rather than replaces token contrast checks, axe, browser layout checks, and human design review.
