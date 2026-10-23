@@ -1,10 +1,10 @@
 # CurioLab — Implementation Specification
 
-**Specification version:** 1.0.0  
-**Primary track:** Fire TV  
-**Project status:** ready for implementation; no code is implied  
-**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](./SHARED_ENGINEERING_STANDARD.md), [episode.schema.json](./schemas/curiolab/episode.schema.json)  
-**Validated draft example:** [episode.example.json](./examples/curiolab/episode.example.json)
+**Specification version:** 1.0.0
+**Primary track:** Fire TV
+**Project status:** ready for implementation; no code is implied
+**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](../../specs/SHARED_ENGINEERING_STANDARD.md), [episode.schema.json](./schemas/episode.schema.json)
+**Validated draft example:** [episode.example.json](./examples/episode.example.json)
 
 ## 1. Product contract
 
@@ -131,7 +131,7 @@ The model training dataset must include at least 50 recording sessions, 10 suppo
 
 ## 4. Episode graph and deterministic behavior
 
-The canonical graph contract is [episode.schema.json](./schemas/curiolab/episode.schema.json).
+The canonical graph contract is [episode.schema.json](./schemas/episode.schema.json).
 
 ### 4.1 Runtime variables
 

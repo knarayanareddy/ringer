@@ -1,20 +1,20 @@
-# Implementation Specification Pack
+# Shared Specification and UI Index
 
-**Version:** 1.0.0  
-**Date:** October 23, 2026  
+**Version:** 1.0.0
+**Date:** October 23, 2026
 **Status:** Architecture and acceptance baseline; no implementation is implied
 
-This directory contains five independent build specifications for the concepts in [PROJECT_RECOMMENDATIONS.md](../PROJECT_RECOMMENDATIONS.md). They are written for an autonomous coding agent or an engineering team. Each project can be built without reading the other four project specifications.
+This directory contains the shared engineering standard and UI review/validation for five independent implementation workspaces in [`projects/`](../projects/). Each project owns its specification, schema/example, UI pack, agent instructions, and traceability registers. Each can be built without reading the other four project specifications.
 
-## Documents
+## Project workspaces
 
-| Project | Build specification | Canonical machine-readable contract | Primary runtime |
-| --- | --- | --- | --- |
-| AccessHold | [ACCESSHOLD.md](./ACCESSHOLD.md) | [access-contract.schema.json](./schemas/accesshold/access-contract.schema.json) | Alexa+ MCP, TypeScript, React, AWS |
-| CurioLab | [CURIOLAB.md](./CURIOLAB.md) | [episode.schema.json](./schemas/curiolab/episode.schema.json) | Fire OS/Android, Kotlin, companion Android, AWS |
-| NextTime | [NEXTTIME.md](./NEXTTIME.md) | [real-world-attempt.schema.json](./schemas/nexttime/real-world-attempt.schema.json) | Bee, iOS/Swift, Python, AWS |
-| HarvestGrid | [HARVESTGRID.md](./HARVESTGRID.md) | [harvest-window.schema.json](./schemas/harvestgrid/harvest-window.schema.json) | Ring, React, Python/CV, AWS |
-| RoomSmith | [ROOMSMITH.md](./ROOMSMITH.md) | [puzzle-graph.schema.json](./schemas/roomsmith/puzzle-graph.schema.json) | Fire OS/Android, Kotlin, WebRTC, AWS |
+| Project | Agent entry point | Build specification | Canonical machine-readable contract | Primary runtime |
+| --- | --- | --- | --- | --- |
+| AccessHold | [AGENTS.md](../projects/accesshold/AGENTS.md) | [SPEC.md](../projects/accesshold/SPEC.md) | [access-contract.schema.json](../projects/accesshold/schemas/access-contract.schema.json) | Alexa+ MCP, TypeScript, React, AWS |
+| CurioLab | [AGENTS.md](../projects/curiolab/AGENTS.md) | [SPEC.md](../projects/curiolab/SPEC.md) | [episode.schema.json](../projects/curiolab/schemas/episode.schema.json) | Fire OS/Android, Kotlin, companion Android, AWS |
+| NextTime | [AGENTS.md](../projects/nexttime/AGENTS.md) | [SPEC.md](../projects/nexttime/SPEC.md) | [real-world-attempt.schema.json](../projects/nexttime/schemas/real-world-attempt.schema.json) | Bee, iOS/Swift, Python, AWS |
+| HarvestGrid | [AGENTS.md](../projects/harvestgrid/AGENTS.md) | [SPEC.md](../projects/harvestgrid/SPEC.md) | [harvest-window.schema.json](../projects/harvestgrid/schemas/harvest-window.schema.json) | Ring, React, Python/CV, AWS |
+| RoomSmith | [AGENTS.md](../projects/roomsmith/AGENTS.md) | [SPEC.md](../projects/roomsmith/SPEC.md) | [puzzle-graph.schema.json](../projects/roomsmith/schemas/puzzle-graph.schema.json) | Fire OS/Android, Kotlin, WebRTC, AWS |
 
 All projects also depend on [SHARED_ENGINEERING_STANDARD.md](./SHARED_ENGINEERING_STANDARD.md).
 
@@ -28,18 +28,18 @@ Each schema has a complete example instance. The examples are intentionally mark
 
 | Project | Example instance |
 | --- | --- |
-| AccessHold | [access-contract.example.json](./examples/accesshold/access-contract.example.json) |
-| CurioLab | [episode.example.json](./examples/curiolab/episode.example.json) |
-| NextTime | [real-world-attempt.example.json](./examples/nexttime/real-world-attempt.example.json) |
-| HarvestGrid | [harvest-window.example.json](./examples/harvestgrid/harvest-window.example.json) |
-| RoomSmith | [puzzle-graph.example.json](./examples/roomsmith/puzzle-graph.example.json) |
+| AccessHold | [access-contract.example.json](../projects/accesshold/examples/access-contract.example.json) |
+| CurioLab | [episode.example.json](../projects/curiolab/examples/episode.example.json) |
+| NextTime | [real-world-attempt.example.json](../projects/nexttime/examples/real-world-attempt.example.json) |
+| HarvestGrid | [harvest-window.example.json](../projects/harvestgrid/examples/harvest-window.example.json) |
+| RoomSmith | [puzzle-graph.example.json](../projects/roomsmith/examples/puzzle-graph.example.json) |
 
 All five schemas pass JSON Schema Draft 2020-12 structural checks, and all five examples validate against their schemas with format checking. Implementations MUST add their own valid and invalid contract tests rather than treating these examples as sufficient coverage.
 
 ## How an implementation agent must use this pack
 
-1. Select **one** project specification. Do not implement all five in one application or share production databases between them.
-2. Treat paths in a project specification as relative to that project's own root. The projects may live in separate repositories or separate top-level directories; no runtime code may import another project's source.
+1. Select **one** workspace under `projects/` and read its `AGENTS.md` first. Do not implement all five in one application or share production databases between them.
+2. Treat paths in a project specification as relative to that project's own root. No runtime code may import another project's source.
 3. Read the shared standard and the selected project specification before creating files.
 4. Copy the canonical schema into the implementation unchanged unless a documented schema-version migration is required.
 5. Build in the specified vertical-slice order. Complete each slice's tests and evidence before starting the next.
@@ -47,9 +47,9 @@ All five schemas pass JSON Schema Draft 2020-12 structural checks, and all five 
 7. Record any necessary departure in `SPEC_DEVIATIONS.md`. A departure that changes a MUST requirement is incomplete until explicitly approved; silently substituting a mock, service, data model, or interaction is not allowed.
 8. Never mark the project complete from unit tests or simulated sponsor integrations alone. The real-track evidence gate is mandatory.
 
-### Suggested agent instruction
+### Agent instruction
 
-> Implement only `<PROJECT>.md` together with `SHARED_ENGINEERING_STANDARD.md` and its referenced schema. Preserve all requirement IDs. Work through the implementation slices in order, create the traceability and deviation registers, run the specified tests, and do not claim completion until every release-blocking gate has evidence. External credentials or unavailable devices are blockers to disclose, not permission to replace live behavior with an unlabeled mock.
+Use the selected workspace's `AGENTS.md`; it contains the project-specific assignment, safeguards, ownership rules, external blockers, and completion gate. A parallel-assignment pattern is available in [`projects/README.md`](../projects/README.md).
 
 ## Requirement language and precedence
 

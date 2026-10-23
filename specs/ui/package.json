@@ -6,7 +6,7 @@
   "scripts": {
     "validate:static": "python3 validate.py",
     "validate:browser": "node validate-browser.cjs",
-    "audit:ui": "impeccable detect --json index.html index.css wireframes.css wireframes.js accesshold curiolab nexttime harvestgrid roomsmith",
+    "audit:ui": "impeccable detect --json index.html index.css wireframes.css wireframes.js ../../projects/accesshold/ui ../../projects/curiolab/ui ../../projects/nexttime/ui ../../projects/harvestgrid/ui ../../projects/roomsmith/ui",
     "validate": "npm run validate:static && npm run validate:browser && npm run --silent audit:ui"
   },
   "devDependencies": {

@@ -1,10 +1,10 @@
 # HarvestGrid — Implementation Specification
 
-**Specification version:** 1.0.0  
-**Primary track:** Ring  
-**Project status:** ready for implementation; no code is implied  
-**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](./SHARED_ENGINEERING_STANDARD.md), [harvest-window.schema.json](./schemas/harvestgrid/harvest-window.schema.json)  
-**Validated example:** [harvest-window.example.json](./examples/harvestgrid/harvest-window.example.json)
+**Specification version:** 1.0.0
+**Primary track:** Ring
+**Project status:** ready for implementation; no code is implied
+**Dependencies:** [SHARED_ENGINEERING_STANDARD.md](../../specs/SHARED_ENGINEERING_STANDARD.md), [harvest-window.schema.json](./schemas/harvest-window.schema.json)
+**Validated example:** [harvest-window.example.json](./examples/harvest-window.example.json)
 
 ## 1. Product contract
 
@@ -194,7 +194,7 @@ harvestgrid/
 
 ## 6. Data model
 
-The canonical forecast is [harvest-window.schema.json](./schemas/harvestgrid/harvest-window.schema.json).
+The canonical forecast is [harvest-window.schema.json](./schemas/harvest-window.schema.json).
 
 | Table/entity | Important fields and restrictions |
 | --- | --- |

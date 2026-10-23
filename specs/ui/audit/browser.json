@@ -30,7 +30,7 @@
       "externalRequests": []
     },
     {
-      "page": "accesshold/wireframe.html",
+      "page": "../../projects/accesshold/ui/wireframe.html",
       "viewport": {
         "name": "desktop",
         "width": 1440,
@@ -52,7 +52,7 @@
       "externalRequests": []
     },
     {
-      "page": "curiolab/wireframe.html",
+      "page": "../../projects/curiolab/ui/wireframe.html",
       "viewport": {
         "name": "desktop",
         "width": 1440,
@@ -74,7 +74,7 @@
       "externalRequests": []
     },
     {
-      "page": "nexttime/wireframe.html",
+      "page": "../../projects/nexttime/ui/wireframe.html",
       "viewport": {
         "name": "desktop",
         "width": 1440,
@@ -96,7 +96,7 @@
       "externalRequests": []
     },
     {
-      "page": "harvestgrid/wireframe.html",
+      "page": "../../projects/harvestgrid/ui/wireframe.html",
       "viewport": {
         "name": "desktop",
         "width": 1440,
@@ -118,7 +118,7 @@
       "externalRequests": []
     },
     {
-      "page": "roomsmith/wireframe.html",
+      "page": "../../projects/roomsmith/ui/wireframe.html",
       "viewport": {
         "name": "desktop",
         "width": 1440,
@@ -162,7 +162,7 @@
       "externalRequests": []
     },
     {
-      "page": "accesshold/wireframe.html",
+      "page": "../../projects/accesshold/ui/wireframe.html",
       "viewport": {
         "name": "mobile",
         "width": 390,
@@ -184,7 +184,7 @@
       "externalRequests": []
     },
     {
-      "page": "curiolab/wireframe.html",
+      "page": "../../projects/curiolab/ui/wireframe.html",
       "viewport": {
         "name": "mobile",
         "width": 390,
@@ -206,7 +206,7 @@
       "externalRequests": []
     },
     {
-      "page": "nexttime/wireframe.html",
+      "page": "../../projects/nexttime/ui/wireframe.html",
       "viewport": {
         "name": "mobile",
         "width": 390,
@@ -228,7 +228,7 @@
       "externalRequests": []
     },
     {
-      "page": "harvestgrid/wireframe.html",
+      "page": "../../projects/harvestgrid/ui/wireframe.html",
       "viewport": {
         "name": "mobile",
         "width": 390,
@@ -250,7 +250,7 @@
       "externalRequests": []
     },
     {
-      "page": "roomsmith/wireframe.html",
+      "page": "../../projects/roomsmith/ui/wireframe.html",
       "viewport": {
         "name": "mobile",
         "width": 390,

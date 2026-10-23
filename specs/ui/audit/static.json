@@ -363,44 +363,67 @@
   },
   "errors": [],
   "html": {
-    "accesshold/wireframe.html": {
+    "projects/accesshold/ui/wireframe.html": {
       "buttons": 13,
       "ids": 20,
       "references": 37,
       "screens": 5
     },
-    "curiolab/wireframe.html": {
+    "projects/curiolab/ui/wireframe.html": {
       "buttons": 16,
       "ids": 22,
       "references": 29,
       "screens": 6
     },
-    "harvestgrid/wireframe.html": {
+    "projects/harvestgrid/ui/wireframe.html": {
       "buttons": 17,
       "ids": 19,
       "references": 23,
       "screens": 4
     },
-    "index.html": {
-      "buttons": 0,
-      "ids": 4,
-      "references": 33,
-      "screens": 0
-    },
-    "nexttime/wireframe.html": {
+    "projects/nexttime/ui/wireframe.html": {
       "buttons": 14,
       "ids": 21,
       "references": 40,
       "screens": 5
     },
-    "roomsmith/wireframe.html": {
+    "projects/roomsmith/ui/wireframe.html": {
       "buttons": 25,
       "ids": 21,
       "references": 24,
       "screens": 5
+    },
+    "specs/ui/index.html": {
+      "buttons": 0,
+      "ids": 4,
+      "references": 33,
+      "screens": 0
     }
   },
-  "markdown_local_links": 61,
+  "markdown_local_links": 252,
+  "requirement_total": 284,
   "screen_total": 25,
-  "status": "passed"
+  "status": "passed",
+  "workspaces": {
+    "accesshold": {
+      "requirement_ids": 56,
+      "traceability_ids": 56
+    },
+    "curiolab": {
+      "requirement_ids": 56,
+      "traceability_ids": 56
+    },
+    "harvestgrid": {
+      "requirement_ids": 60,
+      "traceability_ids": 60
+    },
+    "nexttime": {
+      "requirement_ids": 55,
+      "traceability_ids": 55
+    },
+    "roomsmith": {
+      "requirement_ids": 57,
+      "traceability_ids": 57
+    }
+  }
 }
