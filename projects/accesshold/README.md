@@ -1,7 +1,7 @@
 # AccessHold
 
 **Track:** Alexa+
-**Status:** manual contract and ReferenceTravel fixture-monitoring slices validated locally; application and live integrations not implemented
+**Status:** manual contract, ReferenceTravel fixture-monitoring, and fixture recovery slices validated locally; application and live integrations not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
 AccessHold is post-booking accessibility evidence monitoring and explicitly approved disruption recovery. Its output describes workflow evidence, never a guarantee of physical accessibility.
@@ -20,7 +20,7 @@ make build
 
 `make test-security` also audits the locked npm dependency graph. `make test-integration`, `make test-e2e`, `make test-infra`, and `make deploy` intentionally fail while their real dependencies are absent.
 
-The current fixture imports and explicitly activates a synthetic manual contract, consumes two explicitly requested ReferenceTravel change pages, and reopens four versions through a new JSON repository instance. It exercises immutable asset/evidence versions and a violation-to-completed recovery timeline. Event dedupe and case indexes are in-memory. It does not import email, start a monitoring worker, call Alexa+, SES, Bedrock, a calendar, or a live travel provider, execute a replacement booking, or provide production durability.
+The current fixture imports and explicitly activates a synthetic manual contract, consumes two explicitly requested ReferenceTravel change pages, builds and approves a plan-bound recovery option, records one duplicate-safe `TEST PROVIDER` outbox receipt, imports a synthetic replacement confirmation, and reopens four versions through a new JSON repository instance. It exercises immutable asset/evidence versions and a violation-to-completed recovery timeline. Event dedupe, plans, receipts, and case indexes are in-memory. It does not import email, start a monitoring worker, call Alexa+, SES, Bedrock, a calendar, or a live travel provider, execute a replacement booking, or provide production durability.
 
 ## Workspace map
 
@@ -34,6 +34,7 @@ The current fixture imports and explicitly activates a synthetic manual contract
 | [`packages/domain/`](./packages/domain/) | Recovery-state and replacement-confirmation rules |
 | [`services/importer/`](./services/importer/) | Traveler-scoped manual drafts, explicit activation, and fixture-only version repositories |
 | [`services/monitor/`](./services/monitor/) | Deduplicated ReferenceTravel fixture changes, immutable versions, and recovery timelines; no worker |
+| [`services/recovery/`](./services/recovery/) | Plan-bound fixture options, approvals, TEST PROVIDER outbox receipts, and confirmation replay; no live action |
 | [`packages/adapters/reference-travel/`](./packages/adapters/reference-travel/) | Deterministic TEST PROVIDER change pages; no network or live capability |
 | [`content/feature-registry/`](./content/feature-registry/) | Draft feature definitions; not provider verification |
 | [`scripts/walking-skeleton.ts`](./scripts/walking-skeleton.ts) | Offline fixture path |

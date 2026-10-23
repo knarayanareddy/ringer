@@ -1,7 +1,7 @@
 # CurioLab
 
 **Track:** Fire TV
-**Status:** manual two-trial episode slice and content-compiler foundation validated locally; Fire OS/companion applications not implemented
+**Status:** manual two-trial episode, structured-perception, and content-compiler foundations validated locally; Fire OS/companion applications not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
 CurioLab is a two-screen family science episode in which predictions precede results and confirmed measurements—not canned success values—drive comparisons.
@@ -12,7 +12,7 @@ Requirements: Node.js 22, Corepack, `make`, and a Java 17 runtime for the pure K
 
 ```bash
 make setup                 # install and create .env.local from safe examples
-make dev                   # deterministic Kotlin fixture; no devices or cloud
+make dev                   # structured perception + deterministic Kotlin fixtures; no devices or cloud
 make lint typecheck
 make test-unit test-contract test-security
 corepack pnpm validate:content
@@ -31,6 +31,8 @@ Draft validation checks schema/graph semantics only. `--publish` intentionally r
 | [`schemas/episode.schema.json`](./schemas/episode.schema.json) | Canonical episode contract |
 | [`packages/episode-engine/`](./packages/episode-engine/) | Predictions, adult stop/confirmation/correction, measured comparisons, reflection, and atomic fixture-file snapshots |
 | [`packages/content-compiler/`](./packages/content-compiler/) | Draft schema/graph and publication-preflight checks |
+| [`packages/perception/`](./packages/perception/) | Calibration gates and structured 500 ms stable-count observations; no camera implementation |
+| [`scripts/walking-perception.ts`](./scripts/walking-perception.ts) | Labeled synthetic perception walking fixture |
 | [`content/episodes/bridge-to-moon-base/`](./content/episodes/bridge-to-moon-base/) | Draft content copy and pending human reviews |
 | [`scripts/validate-content.ts`](./scripts/validate-content.ts) | Explicit draft/publication-preflight CLI |
 | [`tests/`](./tests/) | TypeScript and Kotlin unit/contract/security checks |

@@ -12,6 +12,7 @@ import type { FeatureRegistry } from "../packages/policy-engine/src/index.js";
 import { JsonFileFixtureContractRepository } from "../services/importer/src/contract-repository.js";
 import { ManualContractService } from "../services/importer/src/manual-contract-service.js";
 import { ReferenceTravelMonitor } from "../services/monitor/src/reference-travel-monitor.js";
+import { FixtureRecoveryService } from "../services/recovery/src/fixture-recovery-service.js";
 
 function readJson<T>(relative: string): T {
   return JSON.parse(
@@ -89,12 +90,76 @@ try {
     adapter,
     clock,
   );
-  const monitored = await monitor.pollFixtureOnce({
+  const violationPage = await monitor.pollFixtureOnce({
     tripId,
     actorTravelerId: actor,
     cursor: null,
-    limit: 2,
+    limit: 1,
   });
+  const violation = violationPage.results[0]!;
+  if (!violation.recovery_case)
+    throw new Error("Fixture violation case is required");
+  const recovery = new FixtureRecoveryService(clock, [
+    violation.affected_asset,
+  ]);
+  const offered = recovery.offerPlans({
+    document: violation.contract,
+    caseId: violation.recovery_case.case_id,
+    options: [
+      {
+        option_id: "fixture-hotel-recovery",
+        summary: "TEST replacement room with the required fixture feature.",
+        action: "sandbox_rebook",
+        asset_id: violation.affected_asset.asset_id,
+        asset_version: violation.affected_asset.asset_version,
+        evidence_id: violation.affected_asset.evidence_id,
+        evidence_version: violation.affected_asset.evidence_version,
+        replacement_provider_reference: "TEST-RECOVERY-ROOM",
+        amount_minor: 0,
+        currency: "EUR",
+        terms: "Fixture terms only; no live inventory or booking.",
+        inventory_token: "fixture-room-inventory-v1",
+        expires_at: "2026-10-23T12:30:00.000Z",
+        unknowns: ["Independent replacement confirmation is required."],
+      },
+    ],
+  });
+  const plan = offered.plans[0]!;
+  const approval = recovery.approve({
+    document: violation.contract,
+    planHash: plan.plan_hash,
+    actorTravelerId: actor,
+    method: "web",
+    recentAuthentication: true,
+  });
+  const execution = recovery.execute({
+    approvalPlanHash: approval.plan_hash,
+    submittedPlanHash: plan.plan_hash,
+    actorTravelerId: actor,
+  });
+  const duplicateExecution = recovery.execute({
+    approvalPlanHash: approval.plan_hash,
+    submittedPlanHash: plan.plan_hash,
+    actorTravelerId: actor,
+  });
+  const recoveryPage = await monitor.pollFixtureOnce({
+    tripId,
+    actorTravelerId: actor,
+    cursor: violationPage.next_cursor,
+    limit: 1,
+  });
+  const recovered = recoveryPage.results[0]!;
+  const confirmation = recovery.importConfirmation({
+    planHash: plan.plan_hash,
+    actorTravelerId: actor,
+    contractVersion: recovered.contract.version,
+    confirmationSha256: createHash("sha256")
+      .update("walking-fixture-replacement-confirmation")
+      .digest("hex"),
+    allHardConstraintsSatisfiedOrNotApplicable:
+      recovered.evaluation.status === "active",
+  });
+  const monitoredResults = [...violationPage.results, ...recoveryPage.results];
   const recoveryCases = await monitor.cases(tripId, actor);
   const assetVersions = await monitor.assetHistory(
     tripId,
@@ -122,7 +187,7 @@ try {
         monitoring_authorized: restored.monitoring_authorized,
         monitoring_worker_running: false,
         reference_travel: adapter.capabilities(),
-        monitored_statuses: monitored.results.map(
+        monitored_statuses: monitoredResults.map(
           (result) => result.contract.status,
         ),
         recovery_case_state: recoveryCases[0]?.state,
@@ -130,10 +195,19 @@ try {
           (entry) => entry.code,
         ),
         immutable_asset_versions: assetVersions.map((item) => item.version),
-        test_provider_notice: monitored.results[0]?.provider_notice,
+        recovery_no_action_option: offered.no_action.option_id,
+        recovery_approval_method: approval.method,
+        recovery_plan_state: confirmation.plan.state,
+        recovery_receipt_status: execution.receipt.status,
+        recovery_receipt_duplicate_safe:
+          duplicateExecution.duplicate && recovery.receiptCount === 1,
+        recovery_live_action: execution.receipt.live_action,
+        fixture_recovery_executor:
+          "Separate TEST PROVIDER outbox; not a ReferenceTravelAdapter rebooking capability",
+        test_provider_notice: monitoredResults[0]?.provider_notice,
         provenance: restored.provenance,
         notice:
-          "Synthetic persistence and explicitly requested ReferenceTravel fixture pages only; no live provider, monitoring worker, replacement booking, calendar update, or physical accessibility guarantee is claimed.",
+          "Fixture plan approval, TEST PROVIDER outbox, and synthetic replacement confirmation only; no live provider, external recovery action, monitoring worker, calendar update, or physical accessibility guarantee is claimed.",
       },
       null,
       2,

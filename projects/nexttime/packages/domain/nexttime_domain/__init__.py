@@ -10,6 +10,16 @@ from .models import (
     Situation,
     SkillState,
 )
+from .rehearsal import (
+    FixtureRehearsalService,
+    NotificationBehavior,
+    PracticeMode,
+    Recurrence,
+    RehearsalScenario,
+    RehearsalState,
+    build_fixture_rehearsal_scenario,
+    validate_rehearsal_scenario,
+)
 from .review import (
     AttemptReviewResult,
     AttemptReviewService,
@@ -40,9 +50,15 @@ __all__ = [
     "ConsentError",
     "CriterionEvidence",
     "CriterionResult",
+    "FixtureRehearsalService",
+    "MinimizedTranscript",
+    "NotificationBehavior",
     "OutcomeEvaluation",
     "OutcomeStatus",
-    "MinimizedTranscript",
+    "PracticeMode",
+    "Recurrence",
+    "RehearsalScenario",
+    "RehearsalState",
     "Rubric",
     "SelfExcerpt",
     "Situation",
@@ -52,6 +68,7 @@ __all__ = [
     "TranscriptMinimizationService",
     "TranscriptTurn",
     "apply_partial_authentic_evidence",
+    "build_fixture_rehearsal_scenario",
     "evaluate_authentic_attempt",
     "minimize_transcript",
     "redact_deterministic_identifiers",
@@ -59,4 +76,5 @@ __all__ = [
     "rubric_from_mapping",
     "update_skill_from_authentic_attempt",
     "validate_minimized_attempt",
+    "validate_rehearsal_scenario",
 ]

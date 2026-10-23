@@ -11,6 +11,7 @@ from .models import (
     Situation,
     SkillState,
 )
+from .rehearsal import FixtureRehearsalService
 from .review import AttemptReviewService, BreakdownReviewDecision
 from .rubric import evaluate_authentic_attempt, rubric_from_mapping
 from .skills import update_skill_from_authentic_attempt
@@ -103,6 +104,44 @@ def main() -> None:
         expected_version=document["version"] + 1,
         reviewed_at=datetime(2026, 10, 22, 16, 0, tzinfo=UTC),
     )
+    rehearsal = FixtureRehearsalService(
+        reviewed.document,
+        actor_learner_id=document["learner_id"],
+        breakdown_id=document["breakdowns"][0]["breakdown_id"],
+        initial_skill_states=reviewed.skill_states,
+    )
+    rehearsal.mark_recurrence(
+        actor_learner_id=document["learner_id"],
+        occurrence_at=datetime(2026, 10, 24, 15, 0, tzinfo=UTC),
+        marked_at=datetime(2026, 10, 23, 12, 0, tzinfo=UTC),
+    )
+    rehearsal_schedule = rehearsal.schedule(
+        actor_learner_id=document["learner_id"],
+        learner_confirmed=True,
+    )
+    notification = rehearsal.notification_request(
+        actor_learner_id=document["learner_id"],
+        event_id="fixture-notification-1",
+    )
+    rehearsal.begin(actor_learner_id=document["learner_id"])
+    rehearsal.submit_turn(
+        actor_learner_id=document["learner_id"],
+        event_id="fixture-turn-1",
+        turn_id="t1",
+        phrase_id="goal_repair_basic",
+        confidence=0.91,
+    )
+    rehearsal_result = rehearsal.submit_turn(
+        actor_learner_id=document["learner_id"],
+        event_id="fixture-turn-2",
+        turn_id="t2",
+        phrase_id="confirm_time",
+        confidence=0.90,
+    )
+    duplicate_notification = rehearsal.notification_request(
+        actor_learner_id=document["learner_id"],
+        event_id="fixture-notification-retry",
+    )
     print(
         json.dumps(
             {
@@ -126,6 +165,27 @@ def main() -> None:
                 "reviewed_notice": (
                     "A separate fixture-only reviewed copy updates the confirmed "
                     "breakdown once; no real learner or persistent learner store is involved."
+                ),
+                "rehearsal_state": rehearsal_result.state.value,
+                "rehearsal_target": rehearsal.scenario.target_function,
+                "rehearsal_estimated_seconds": rehearsal.scenario.estimated_seconds,
+                "rehearsal_scheduled_at": (
+                    rehearsal_schedule.scheduled_at.isoformat()
+                    if rehearsal_schedule.scheduled_at is not None
+                    else None
+                ),
+                "rehearsal_committed_turns": rehearsal_result.committed_turn_count,
+                "rehearsal_notification_status": notification.status if notification else None,
+                "rehearsal_notification_duplicate_safe": (
+                    duplicate_notification.duplicate if duplicate_notification else False
+                ),
+                "authentic_skills_unchanged_by_rehearsal": (
+                    rehearsal.authentic_skill_states == reviewed.skill_states
+                ),
+                "rehearsal_audio_generated": False,
+                "rehearsal_notice": (
+                    "Deterministic text/template and fixture notification request only; "
+                    "no Polly, Bedrock, iOS, actual notification, or learning outcome is claimed."
                 ),
             },
             indent=2,
