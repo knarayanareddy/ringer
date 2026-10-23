@@ -1,6 +1,6 @@
 # AccessHold — Specification Traceability
 
-**Status:** local contract, ReferenceTravel monitoring, and fixture recovery slices validated; most requirements remain incomplete
+**Status:** local contract, ReferenceTravel monitoring, fixture recovery, handoff, and calendar-intent slices validated; most requirements remain incomplete
 **Coverage:** 56 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -34,9 +34,9 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-AH-011` | Execute an approved provider request or supported provider action idempotently and record its receipt/status. | `in_progress` | `services/recovery/src/fixture-recovery-service.ts` | `tests/unit/fixture-recovery-service.test.ts`<br>`docs/validation.md` | — |
 | `FR-AH-012` | Mark recovery complete only after importing a replacement confirmation and revalidating the contract. | `in_progress` | `packages/domain`<br>`services/monitor/src/reference-travel-monitor.ts`<br>`services/recovery/src/fixture-recovery-service.ts` | `tests/unit`<br>`tests/unit/reference-travel-monitor.test.ts`<br>`tests/unit/fixture-recovery-service.test.ts` | — |
 | `FR-AH-013` | Provide Alexa+ tools and rich cards for status, evidence, changes, recovery options, approval, and handoff. | `not_started` | — | — | — |
-| `FR-AH-014` | Provide a human-handoff packet containing the itinerary, constraints, evidence, attempted actions, and unknowns. | `not_started` | — | — | — |
+| `FR-AH-014` | Provide a human-handoff packet containing the itinerary, constraints, evidence, attempted actions, and unknowns. | `implemented` | `services/workflow/src/fixture-workflow-service.ts` | `tests/unit/fixture-workflow-service.test.ts`<br>`docs/validation.md` | — |
 | `FR-AH-015` | Support contract/trip export, correction, revocation, and deletion. | `in_progress` | `services/importer/src/manual-contract-service.ts` | `tests/unit/manual-contract-service.test.ts` | — |
-| `FR-AH-016` | Update calendar events only from confirmed itinerary versions. | `not_started` | — | — | — |
+| `FR-AH-016` | Update calendar events only from confirmed itinerary versions. | `implemented` | `services/workflow/src/fixture-workflow-service.ts` | `tests/unit/fixture-workflow-service.test.ts`<br>`docs/validation.md` | — |
 | `INT-AH-001` | A real Alexa+ Agent Skill or self-hosted MCP server using MCP specification 2025-11-25 or later and Streamable HTTP MUST run in the main flow. | `not_started` | — | — | — |
 | `INT-AH-002` | The required Alexa+ simulator or working simulated Alexa+ web experience MUST exercise the actual MCP/Skill backend in demo evidence. | `not_started` | — | — | — |
 | `INT-AH-003` | SES inbound/outbound email MUST be used for the live email path; Mailpit is local-only evidence. | `not_started` | — | — | — |
@@ -46,7 +46,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `NFR-AH-001` | p95 read API latency below 500 ms and p95 mutation acknowledgement below 1 s, excluding provider work. | `not_started` | — | — | — |
 | `NFR-AH-002` | A provider/status event begins constraint evaluation within 60 seconds of ingestion under normal load. | `not_started` | — | — | — |
 | `NFR-AH-003` | Alexa+ status responses return initial voice-safe content within 2.5 seconds; longer work continues with a task ID. | `not_started` | — | — | — |
-| `NFR-AH-004` | No duplicate provider request, calendar update, or booking action under at-least-once delivery and client retries. | `in_progress` | `services/recovery/src/fixture-recovery-service.ts` | `tests/unit/fixture-recovery-service.test.ts` | — |
+| `NFR-AH-004` | No duplicate provider request, calendar update, or booking action under at-least-once delivery and client retries. | `in_progress` | `services/recovery/src/fixture-recovery-service.ts`<br>`services/workflow/src/fixture-workflow-service.ts` | `tests/unit/fixture-recovery-service.test.ts`<br>`tests/unit/fixture-workflow-service.test.ts` | — |
 | `NFR-AH-005` | A process restart loses no approved workflow state or evidence. | `in_progress` | `services/importer/src/contract-repository.ts` | `tests/unit/manual-contract-service.test.ts` | — |
 | `NFR-AH-006` | All hard-constraint evaluations are reproducible from contract version, evidence versions, and policy version. | `implemented` | `services/monitor/src/reference-travel-monitor.ts`<br>`packages/policy-engine/src/index.ts` | `tests/unit/reference-travel-monitor.test.ts`<br>`tests/unit/policy-engine.test.ts` | — |
 | `SEC-AH-001` | Access needs are sensitive data; no advertising, public profile, or model-training use by default. | `not_started` | — | — | — |
@@ -72,7 +72,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-AH-013` | Given a repeated execution request, when retried, then only one external action/receipt exists. | `in_progress` | `services/recovery/src/fixture-recovery-service.ts` | `tests/unit/fixture-recovery-service.test.ts`<br>`docs/validation.md` | — |
 | `AC-AH-014` | Given SES request acceptance, when checking status, then the case is awaiting confirmation, not completed. | `verified` | `packages/domain` | `tests/unit`<br>`docs/validation.md` | — |
 | `AC-AH-015` | Given a replacement confirmation with an unresolved hard constraint, when imported, then the case reopens. | `in_progress` | `services/recovery/src/fixture-recovery-service.ts` | `tests/unit/fixture-recovery-service.test.ts` | — |
-| `AC-AH-016` | Given a valid replacement confirmation, when revalidated, then calendar update and completion occur once. | `in_progress` | `services/recovery/src/fixture-recovery-service.ts`<br>`services/monitor/src/reference-travel-monitor.ts` | `tests/unit/fixture-recovery-service.test.ts` | — |
+| `AC-AH-016` | Given a valid replacement confirmation, when revalidated, then calendar update and completion occur once. | `in_progress` | `services/recovery/src/fixture-recovery-service.ts`<br>`services/monitor/src/reference-travel-monitor.ts`<br>`services/workflow/src/fixture-workflow-service.ts` | `tests/unit/fixture-recovery-service.test.ts`<br>`tests/unit/fixture-workflow-service.test.ts`<br>`docs/validation.md` | — |
 | `AC-AH-017` | Given a view-only advocate, when requesting evidence outside scope, then access is denied and audited. | `not_started` | — | — | — |
 | `AC-AH-018` | Given prompt injection in a provider email, when extracted, then no tool/action instruction is executed. | `not_started` | — | — | — |
 | `AC-AH-019` | Given revoked monitoring consent, when the next poll occurs, then no provider request is made. | `not_started` | — | — | — |

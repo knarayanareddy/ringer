@@ -13,6 +13,10 @@ import { JsonFileFixtureContractRepository } from "../services/importer/src/cont
 import { ManualContractService } from "../services/importer/src/manual-contract-service.js";
 import { ReferenceTravelMonitor } from "../services/monitor/src/reference-travel-monitor.js";
 import { FixtureRecoveryService } from "../services/recovery/src/fixture-recovery-service.js";
+import {
+  FixtureCalendarService,
+  FixtureHandoffService,
+} from "../services/workflow/src/fixture-workflow-service.js";
 
 function readJson<T>(relative: string): T {
   return JSON.parse(
@@ -159,6 +163,38 @@ try {
     allHardConstraintsSatisfiedOrNotApplicable:
       recovered.evaluation.status === "active",
   });
+  const handoffService = new FixtureHandoffService(clock);
+  const handoff = handoffService.requestHandoff({
+    document: recovered.contract,
+    caseId: violation.recovery_case.case_id,
+    actorTravelerId: actor,
+    reason: "Traveler requested human review of the fixture recovery evidence.",
+    plan: confirmation.plan,
+    receipt: execution.receipt,
+  });
+  const duplicateHandoff = handoffService.requestHandoff({
+    document: recovered.contract,
+    caseId: violation.recovery_case.case_id,
+    actorTravelerId: actor,
+    reason: "Traveler requested human review of the fixture recovery evidence.",
+    plan: confirmation.plan,
+    receipt: execution.receipt,
+  });
+  const calendarService = new FixtureCalendarService(clock);
+  const calendar = calendarService.updateConfirmedItinerary({
+    document: recovered.contract,
+    completedPlan: confirmation.plan,
+    actorTravelerId: actor,
+    externalEventId: "fixture-calendar-event-1",
+    requestId: "fixture-calendar-request-1",
+  });
+  const duplicateCalendar = calendarService.updateConfirmedItinerary({
+    document: recovered.contract,
+    completedPlan: confirmation.plan,
+    actorTravelerId: actor,
+    externalEventId: "fixture-calendar-event-1",
+    requestId: "fixture-calendar-request-retry",
+  });
   const monitoredResults = [...violationPage.results, ...recoveryPage.results];
   const recoveryCases = await monitor.cases(tripId, actor);
   const assetVersions = await monitor.assetHistory(
@@ -202,12 +238,20 @@ try {
         recovery_receipt_duplicate_safe:
           duplicateExecution.duplicate && recovery.receiptCount === 1,
         recovery_live_action: execution.receipt.live_action,
+        handoff_packet_id: handoff.packet.packet_id,
+        handoff_duplicate_safe:
+          duplicateHandoff.duplicate && handoffService.packetCount === 1,
+        handoff_live_handoff: handoff.packet.live_handoff,
+        calendar_update_status: calendar.update.status,
+        calendar_update_duplicate_safe:
+          duplicateCalendar.duplicate && calendarService.updateCount === 1,
+        calendar_external_update: calendar.update.external_update,
         fixture_recovery_executor:
           "Separate TEST PROVIDER outbox; not a ReferenceTravelAdapter rebooking capability",
         test_provider_notice: monitoredResults[0]?.provider_notice,
         provenance: restored.provenance,
         notice:
-          "Fixture plan approval, TEST PROVIDER outbox, and synthetic replacement confirmation only; no live provider, external recovery action, monitoring worker, calendar update, or physical accessibility guarantee is claimed.",
+          "Fixture plan approval, TEST PROVIDER outbox, synthetic replacement confirmation, human-handoff packet, and calendar intent only; no live provider, external recovery action, monitoring worker, external calendar update, or physical accessibility guarantee is claimed.",
       },
       null,
       2,
