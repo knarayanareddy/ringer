@@ -1,6 +1,6 @@
 # HarvestGrid — Specification Traceability
 
-**Status:** initial local foundation validated; most requirements remain incomplete
+**Status:** local glean-operations slice validated; most requirements remain incomplete
 **Coverage:** 60 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -29,14 +29,14 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-HG-006` | Produce visible-fruit detections, count/area/color features, occlusion and quality metrics with model/data versions. | `not_started` | — | — | — |
 | `FR-HG-007` | Generate a versioned probabilistic harvest window and visible-yield estimate using the canonical schema. | `in_progress` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/contract`<br>`tests/unit/test_forecast.py` | — |
 | `FR-HG-008` | Mark forecasts experimental when data/model gates are unmet; always require human readiness confirmation. | `in_progress` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/unit/test_forecast.py` | — |
-| `FR-HG-009` | Obtain owner approval before a forecast becomes a glean request. | `not_started` | — | — | — |
-| `FR-HG-010` | Capture volunteer training/availability/equipment and recipient acceptance/capacity as hard constraints. | `not_started` | — | — | — |
-| `FR-HG-011` | Produce deterministic coordinator-reviewed assignments with no protected-trait scoring. | `in_progress` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py` | — |
-| `FR-HG-012` | Orchestrate invitations, reminders, cancellations, access instructions, and escalation with durable state. | `not_started` | — | — | — |
-| `FR-HG-013` | Reveal exact address/access notes only to assigned eligible volunteers for the minimum necessary period. | `not_started` | — | — | — |
+| `FR-HG-009` | Obtain owner approval before a forecast becomes a glean request. | `implemented` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
+| `FR-HG-010` | Capture volunteer training/availability/equipment and recipient acceptance/capacity as hard constraints. | `implemented` | `packages/matching/harvestgrid_domain_matching/engine.py`<br>`packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_matching.py`<br>`tests/unit/test_operations.py` | — |
+| `FR-HG-011` | Produce deterministic coordinator-reviewed assignments with no protected-trait scoring. | `implemented` | `packages/matching/harvestgrid_domain_matching/engine.py`<br>`packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_matching.py`<br>`tests/unit/test_operations.py` | — |
+| `FR-HG-012` | Orchestrate invitations, reminders, cancellations, access instructions, and escalation with durable state. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
+| `FR-HG-013` | Reveal exact address/access notes only to assigned eligible volunteers for the minimum necessary period. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
 | `FR-HG-014` | Record coordinator completion, actual harvested/accepted weights, rejection/spoilage, and donation receipt data. | `not_started` | — | — | — |
 | `FR-HG-015` | Compare forecast to outcome in an evaluation set; no automatic production retraining from one outcome. | `not_started` | — | — | — |
-| `FR-HG-016` | Support consent revocation, camera unlink, data export/deletion, and organization offboarding. | `not_started` | — | — | — |
+| `FR-HG-016` | Support consent revocation, camera unlink, data export/deletion, and organization offboarding. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
 | `INT-HG-001` | A documented Ring API/SDK/simulator/device integration MUST execute in the main observation path and appear in demo evidence. | `not_started` | — | — | — |
 | `INT-HG-002` | Ring calls MUST be server-to-server; browser code never calls Ring OAuth/device endpoints directly. | `not_started` | — | — | — |
 | `INT-HG-003` | Webhooks use official HMAC verification, raw-body handling, five-second acknowledgement, idempotency, and rate-limit behavior described in the companion hackathon review. | `not_started` | — | — | — |
@@ -47,17 +47,17 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `NFR-HG-001` | Valid Ring event acknowledgement within five seconds; processing continues asynchronously. | `not_started` | — | — | — |
 | `NFR-HG-002` | New media begins feature extraction within 15 minutes; scheduled forecasts complete within five minutes per tree on CPU reference infrastructure. | `not_started` | — | — | — |
 | `NFR-HG-003` | p95 dashboard read latency below 700 ms for a 1,000-tree organization. | `not_started` | — | — | — |
-| `NFR-HG-004` | Duplicate Ring/weather/notification events produce no duplicate observations, gleans, or messages. | `not_started` | — | — | — |
+| `NFR-HG-004` | Duplicate Ring/weather/notification events produce no duplicate observations, gleans, or messages. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
 | `NFR-HG-005` | Raw residential media is inaccessible to public users, volunteers without assignment, model trainers without separate consent, and analytics. | `not_started` | — | — | — |
 | `NFR-HG-006` | Forecast output always includes model/data version, valid interval, uncertainty, and quality/confidence reasons. | `not_started` | — | — | — |
 | `NFR-HG-007` | Camera or model outage never auto-cancels a confirmed glean or marks produce unsafe/unripe; it creates a coordinator review state. | `not_started` | — | — | — |
-| `SEC-HG-001` | Exact address/coordinates/access notes are isolated and revealed only under assignment policy. | `not_started` | — | — | — |
+| `SEC-HG-001` | Exact address/coordinates/access notes are isolated and revealed only under assignment policy. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
 | `SEC-HG-002` | Raw Ring media defaults to deletion seven days after feature extraction; crop-only media requires separate owner consent for training. | `not_started` | — | — | — |
 | `SEC-HG-003` | No public residential map, face/plate recognition, person tracking, or volunteer behavioral surveillance. | `not_started` | — | — | — |
-| `SEC-HG-004` | Camera consent and organizational operating consent are separately revocable; revocation stops collection and address reveal. | `not_started` | — | — | — |
+| `SEC-HG-004` | Camera consent and organizational operating consent are separately revocable; revocation stops collection and address reveal. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
 | `SEC-HG-005` | Visual outputs never assert internal ripeness or food safety; coordinator checklist governs operational decisions. | `in_progress` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/security` | — |
-| `SEC-HG-006` | Volunteers are never auto-dispatched; trained leader and coordinator approval are mandatory. | `not_started` | — | — | — |
-| `SEC-HG-007` | Owner address, raw media, access notes, and recipient information are excluded from logs/model prompts/public receipts. | `not_started` | — | — | — |
+| `SEC-HG-006` | Volunteers are never auto-dispatched; trained leader and coordinator approval are mandatory. | `implemented` | `packages/domain/harvestgrid_domain/operations.py`<br>`packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_operations.py`<br>`tests/unit/test_matching.py` | — |
+| `SEC-HG-007` | Owner address, raw media, access notes, and recipient information are excluded from logs/model prompts/public receipts. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
 | `SEC-HG-008` | Dataset exports use crop-only media, consent manifest, coarse/no location, and re-identification review. | `not_started` | — | — | — |
 | `AC-HG-001` | Given no owner/coordinator view approval, when collection is requested, then no media is collected. | `not_started` | — | — | — |
 | `AC-HG-002` | Given a real supported Ring device, when onboarding, then capabilities and one real observation are recorded truthfully. | `not_started` | — | — | — |
@@ -70,14 +70,14 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-HG-009` | Given insufficient training data, when forecasting, then baseline output is experimental and requires review. | `verified` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/unit/test_forecast.py`<br>`docs/validation.md` | — |
 | `AC-HG-010` | Given any valid forecast, when serialized, then it passes schema and has internal ripeness/food-safety flags false. | `verified` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/contract`<br>`docs/validation.md` | — |
 | `AC-HG-011` | Given invalid interval ordering/model output, when validating, then forecast is rejected rather than repaired arbitrarily. | `verified` | `packages/domain/harvestgrid_domain/forecast.py` | `tests/unit/test_forecast.py`<br>`docs/validation.md` | — |
-| `AC-HG-012` | Given no owner approval, when matching starts, then no invitations or address reveals occur. | `in_progress` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py` | — |
+| `AC-HG-012` | Given no owner approval, when matching starts, then no invitations or address reveals occur. | `implemented` | `packages/domain/harvestgrid_domain/operations.py`<br>`packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_operations.py`<br>`tests/unit/test_matching.py`<br>`docs/validation.md` | — |
 | `AC-HG-013` | Given no trained leader, when matching, then the glean is ineligible regardless of score. | `verified` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py`<br>`docs/validation.md` | — |
 | `AC-HG-014` | Given insufficient recipient capacity, when matching, then hard filter blocks or requires coordinator alternative. | `verified` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py`<br>`docs/validation.md` | — |
 | `AC-HG-015` | Given two identical ranking inputs, when scored twice, then explanations and ordering are identical. | `verified` | `packages/matching/harvestgrid_domain_matching/engine.py` | `tests/unit/test_matching.py`<br>`docs/validation.md` | — |
 | `AC-HG-016` | Given a material new forecast after confirmation, when received, then existing event remains and coordinator review is required. | `not_started` | — | — | — |
-| `AC-HG-017` | Given cancellation, when volunteer requests access, then exact details are unavailable and tokens are revoked. | `not_started` | — | — | — |
-| `AC-HG-018` | Given duplicate invitation/completion events, when processed, then one message/event/receipt results. | `not_started` | — | — | — |
+| `AC-HG-017` | Given cancellation, when volunteer requests access, then exact details are unavailable and tokens are revoked. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
+| `AC-HG-018` | Given duplicate invitation/completion events, when processed, then one message/event/receipt results. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
 | `AC-HG-019` | Given actual weights, when verified, then evaluation uses accepted/rejected amounts correctly and no automatic model promotion occurs. | `not_started` | — | — | — |
-| `AC-HG-020` | Given owner revocation, when next collection/match occurs, then both stop and scoped deletion begins. | `not_started` | — | — | — |
+| `AC-HG-020` | Given owner revocation, when next collection/match occurs, then both stop and scoped deletion begins. | `in_progress` | `packages/domain/harvestgrid_domain/operations.py` | `tests/unit/test_operations.py` | — |
 | `AC-HG-021` | Given another organization's tree IDs, when accessed, then authorization denies data and media. | `not_started` | — | — | — |
 | `AC-HG-022` | Given a real Ring device/simulator, when the demo runs, then actual documented Ring data drives features, forecast review, and glean workflow. | `not_started` | — | — | — |

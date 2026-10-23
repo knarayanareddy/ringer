@@ -1,5 +1,6 @@
 from .engine import (
     Candidate,
+    CandidateDecision,
     HardConstraints,
     RankingFeatures,
     evaluate_candidate,
@@ -9,6 +10,7 @@ from .engine import (
 
 __all__ = [
     "Candidate",
+    "CandidateDecision",
     "HardConstraints",
     "RankingFeatures",
     "evaluate_candidate",

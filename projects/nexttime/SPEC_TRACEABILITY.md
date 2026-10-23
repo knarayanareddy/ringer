@@ -1,6 +1,6 @@
 # NextTime — Specification Traceability
 
-**Status:** initial local foundation validated; most requirements remain incomplete
+**Status:** local transcript-minimization slice validated; most requirements remain incomplete
 **Coverage:** 55 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -22,9 +22,9 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | ID | Requirement or scenario summary | Status | Implementation paths | Test paths | Demo/device evidence |
 | --- | --- | --- | --- | --- | --- |
 | `FR-NT-001` | Ingest actual Bee/Apple Watch Bee recording references and transcripts through documented CLI, MCP, or Agent Skill connectivity. | `not_started` | — | — | — |
-| `FR-NT-002` | Require capture mode, consent attestation, situation, and retention policy before processing. | `not_started` | — | — | — |
-| `FR-NT-003` | Separate learner turns using Bee labels, diarization, learner labeling, or self-only mode; ambiguous turns require review. | `not_started` | — | — | — |
-| `FR-NT-004` | Minimize transient transcripts and retain no long-term other-speaker transcript in the canonical attempt. | `in_progress` | `packages/domain/nexttime_domain/minimization.py` | `tests/unit/test_minimization.py` | — |
+| `FR-NT-002` | Require capture mode, consent attestation, situation, and retention policy before processing. | `implemented` | `packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_transcripts.py` | — |
+| `FR-NT-003` | Separate learner turns using Bee labels, diarization, learner labeling, or self-only mode; ambiguous turns require review. | `in_progress` | `packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_transcripts.py` | — |
+| `FR-NT-004` | Minimize transient transcripts and retain no long-term other-speaker transcript in the canonical attempt. | `implemented` | `packages/domain/nexttime_domain/minimization.py`<br>`packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_minimization.py`<br>`tests/unit/test_transcripts.py` | — |
 | `FR-NT-005` | Propose at most three functional breakdowns with self-evidence excerpts and ASR/model confidence. | `not_started` | — | — | — |
 | `FR-NT-006` | Require learner confirmation/correction before a low-confidence or consequential breakdown updates the learner model. | `in_progress` | `packages/domain/nexttime_domain/skills.py` | `tests/unit/test_consent_and_skills.py` | — |
 | `FR-NT-007` | Evaluate the authentic attempt with a deterministic situation rubric; ambiguous outcomes remain unknown. | `verified` | `packages/domain/nexttime_domain/rubric.py` | `tests/unit/test_rubric.py`<br>`docs/validation.md` | — |
@@ -44,21 +44,21 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `INT-NT-006` | Calendar access is optional and incremental; the core flow works with learner-marked recurrence and local notifications. | `not_started` | — | — | — |
 | `NFR-NT-001` | A new Bee transcript begins processing within 60 seconds after bridge ingestion under normal connectivity. | `not_started` | — | — | — |
 | `NFR-NT-002` | Rehearsal audio starts within 1.5 seconds after cached download or 4 seconds on first generation; push-to-talk response begins within 2.5 seconds p95. | `not_started` | — | — | — |
-| `NFR-NT-003` | No long-term record contains other-speaker raw transcript; automated schema and database scans enforce this. | `in_progress` | `packages/domain/nexttime_domain/minimization.py` | `tests/security` | — |
-| `NFR-NT-004` | Transient source transcripts delete within 24 hours of successful minimization or immediately on failure/revocation. | `not_started` | — | — | — |
-| `NFR-NT-005` | Duplicate Bee recording references create one attempt; rehearsal notifications and outcome updates are idempotent. | `not_started` | — | — | — |
+| `NFR-NT-003` | No long-term record contains other-speaker raw transcript; automated schema and database scans enforce this. | `in_progress` | `packages/domain/nexttime_domain/minimization.py`<br>`packages/domain/nexttime_domain/transcripts.py` | `tests/security`<br>`tests/unit/test_transcripts.py` | — |
+| `NFR-NT-004` | Transient source transcripts delete within 24 hours of successful minimization or immediately on failure/revocation. | `in_progress` | `packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_transcripts.py` | — |
+| `NFR-NT-005` | Duplicate Bee recording references create one attempt; rehearsal notifications and outcome updates are idempotent. | `in_progress` | `packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_transcripts.py` | — |
 | `NFR-NT-006` | Real-world outcome assertions below confidence 0.75 or without required evidence remain `unknown` pending learner review. | `not_started` | — | — | — |
-| `SEC-NT-001` | Consent is capture-mode-specific and revocable; self memo is the required alternative when participant consent is unavailable. | `not_started` | — | — | — |
-| `SEC-NT-002` | Other-speaker transcript exists only transiently in consented mode and is never included in the canonical attempt, analytics, prompts for unrelated tasks, or training. | `in_progress` | `packages/domain/nexttime_domain/minimization.py` | `tests/security` | — |
+| `SEC-NT-001` | Consent is capture-mode-specific and revocable; self memo is the required alternative when participant consent is unavailable. | `in_progress` | `packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_transcripts.py` | — |
+| `SEC-NT-002` | Other-speaker transcript exists only transiently in consented mode and is never included in the canonical attempt, analytics, prompts for unrelated tasks, or training. | `in_progress` | `packages/domain/nexttime_domain/minimization.py`<br>`packages/domain/nexttime_domain/transcripts.py` | `tests/security`<br>`tests/unit/test_transcripts.py` | — |
 | `SEC-NT-003` | Bee credentials remain in the trusted bridge; iOS receives only learner-scoped API tokens. | `not_started` | — | — | — |
 | `SEC-NT-004` | Raw rehearsal audio deletes immediately after transcription; rehearsal transcripts delete after 24 hours unless the learner explicitly saves a self excerpt. | `not_started` | — | — | — |
 | `SEC-NT-005` | Transient source deletion is alarmed and verified; revoked consent prevents further bridge acknowledgement/ingestion. | `not_started` | — | — | — |
 | `SEC-NT-006` | No sensitive situation ingestion; classifiers and user controls exclude medical/legal/immigration/disciplinary/financial/crisis content. | `not_started` | — | — | — |
 | `SEC-NT-007` | No inference of emotion, intelligence, employment status, ethnicity, health, or native identity. | `not_started` | — | — | — |
 | `SEC-NT-008` | Evaluation reports ASR errors by accent and device; low-confidence recognition never becomes a negative real-world outcome without review. | `not_started` | — | — | — |
-| `AC-NT-001` | Given no consent attestation, when a transcript arrives, then processing is rejected and transient data is deleted. | `in_progress` | `packages/domain/nexttime_domain/consent.py` | `tests/unit/test_consent_and_skills.py` | — |
-| `AC-NT-002` | Given self-memo mode, when other-speaker-like turns appear, then they are excluded or sent to review, never persisted as conversation evidence. | `in_progress` | `packages/domain/nexttime_domain/minimization.py` | `tests/unit/test_minimization.py` | — |
-| `AC-NT-003` | Given duplicate Bee references, when ingested concurrently, then one attempt results. | `not_started` | — | — | — |
+| `AC-NT-001` | Given no consent attestation, when a transcript arrives, then processing is rejected and transient data is deleted. | `in_progress` | `packages/domain/nexttime_domain/consent.py`<br>`packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_consent_and_skills.py`<br>`tests/unit/test_transcripts.py` | — |
+| `AC-NT-002` | Given self-memo mode, when other-speaker-like turns appear, then they are excluded or sent to review, never persisted as conversation evidence. | `implemented` | `packages/domain/nexttime_domain/minimization.py`<br>`packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_minimization.py`<br>`tests/unit/test_transcripts.py`<br>`docs/validation.md` | — |
+| `AC-NT-003` | Given duplicate Bee references, when ingested concurrently, then one attempt results. | `in_progress` | `packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_transcripts.py` | — |
 | `AC-NT-004` | Given ambiguous diarization, when extraction completes, then review is required and no skill update occurs. | `verified` | `packages/domain/nexttime_domain/rubric.py`<br>`packages/domain/nexttime_domain/skills.py` | `tests/unit`<br>`docs/validation.md` | — |
 | `AC-NT-005` | Given a minimized attempt, when serialized/scanned, then it passes schema and contains no other-speaker transcript collection. | `verified` | `packages/domain/nexttime_domain/minimization.py` | `tests/contract`<br>`tests/unit/test_minimization.py`<br>`docs/validation.md` | — |
 | `AC-NT-006` | Given a rejected breakdown, when review completes, then learner state and rehearsal targeting do not use it. | `not_started` | — | — | — |
@@ -72,7 +72,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-NT-014` | Given ambiguous rehearsal speech, when mapped, then retry/support is offered and no negative authentic outcome is recorded. | `not_started` | — | — | — |
 | `AC-NT-015` | Given completed rehearsal only, when progress loads, then authentic mastery remains unchanged. | `not_started` | — | — | — |
 | `AC-NT-016` | Given a linked second authentic attempt, when confirmed, then criterion deltas and skill updates occur once. | `not_started` | — | — | — |
-| `AC-NT-017` | Given revoked consent, when the next bridge sync/process occurs, then ingestion stops and deletion starts. | `not_started` | — | — | — |
+| `AC-NT-017` | Given revoked consent, when the next bridge sync/process occurs, then ingestion stops and deletion starts. | `in_progress` | `packages/domain/nexttime_domain/transcripts.py` | `tests/unit/test_transcripts.py` | — |
 | `AC-NT-018` | Given account deletion, when jobs finish, then attempts, transcripts, audio, caches, prompts, and derived states under service control are deleted. | `not_started` | — | — | — |
 | `AC-NT-019` | Given another learner's IDs, when API access is attempted, then all object access is denied. | `not_started` | — | — | — |
 | `AC-NT-020` | Given actual Bee hardware/Apple Watch Bee, when the demo runs, then real recorded/processed data flows through documented CLI/MCP into two authentic attempt evaluations. | `not_started` | — | — | — |

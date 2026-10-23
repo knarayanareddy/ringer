@@ -7,7 +7,7 @@ Inventory date: 2026-10-23. All observations and puzzle selections are synthetic
 | Draft puzzle graph | `examples/`, `content/episodes/light-the-last-lighthouse/` | Authored fictional story/puzzle content; placeholder hashes | Source-controlled graph/fallback tests only |
 | Review registry | `content/episodes/light-the-last-lighthouse/reviews.json` | Pending reviews and null reviewers | Publication remains forbidden |
 | Observation fixtures | Kotlin tests | Synthetic object/predicate/confidence/timing values | Process lifetime only; no camera source |
-| Committed state/case metadata | Kotlin tests and walking object | Synthetic puzzle IDs, paths, and sequences | In-memory only; no rendered/exported report |
+| Committed state/case metadata | Kotlin tests and walking object | Synthetic puzzle IDs, paths, sequences, hint levels, and supplied active time | In-memory only; no rendered/exported report or durable snapshot |
 | Schema copy | `packages/content-compiler/` | Non-sensitive content contract | Byte-drift tests |
 | Configuration examples | `.env.example` | Safe placeholders | Real environment files are Git-ignored |
 

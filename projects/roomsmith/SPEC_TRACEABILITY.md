@@ -1,6 +1,6 @@
 # RoomSmith — Specification Traceability
 
-**Status:** initial local foundation validated; most requirements remain incomplete
+**Status:** local ordered-remote-episode slice validated; most requirements remain incomplete
 **Coverage:** 57 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -28,10 +28,10 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-RS-005` | Detect only allowlisted objects, colors, spatial relations, zones, and hand gestures on-device. | `not_started` | — | — | — |
 | `FR-RS-006` | Emit candidate and stable structured observations with confidence, sequence, and calibration state; never emit frames. | `not_started` | — | — | — |
 | `FR-RS-007` | Evaluate puzzle requirements deterministically on Fire TV using hold-to-verify and temporal hysteresis. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
-| `FR-RS-008` | Complete the three authored puzzles and corresponding scene transitions without model participation. | `not_started` | — | — | — |
+| `FR-RS-008` | Complete the three authored puzzles and corresponding scene transitions without model participation. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt` | `packages/puzzle-engine/src/test` | — |
 | `FR-RS-009` | Provide role-based clues and a complete solo path. | `not_started` | — | — | — |
-| `FR-RS-010` | Provide equivalent remote fallbacks, no-timing mode, non-color labels, captions, and reduced motion. | `not_started` | — | — | — |
-| `FR-RS-011` | Supply authored hints and optional schema-bounded Bedrock director hints with deterministic fallback. | `not_started` | — | — | — |
+| `FR-RS-010` | Provide equivalent remote fallbacks, no-timing mode, non-color labels, captions, and reduced motion. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
+| `FR-RS-011` | Supply authored hints and optional schema-bounded Bedrock director hints with deterministic fallback. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt` | `packages/puzzle-engine/src/test` | — |
 | `FR-RS-012` | Recover from disconnect/process restart using committed state and reject stale observations. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `FR-RS-013` | Generate a final illustrated case report from game state only, not room imagery. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `FR-RS-014` | Publish only schema-valid, solver-verified, asset-verified, human-reviewed puzzle graphs. | `in_progress` | `packages/content-compiler` | `tests/unit`<br>`tests/security` | — |
@@ -47,7 +47,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `NFR-RS-003` | Puzzle evaluation below 8 ms and never waits on network/model inference. | `not_started` | — | — | — |
 | `NFR-RS-004` | Zero false puzzle accepts in 1,000 scripted negative interactions per release; measured valid-setup first-attempt completion at least 95% before fallback. | `not_started` | — | — | — |
 | `NFR-RS-005` | Perception loss produces a recoverable calibration/fallback state within two seconds, never a false success. | `not_started` | — | — | — |
-| `NFR-RS-006` | Offline remote-only play works after episode download; no raw room media appears in logs, backend storage, analytics, or case reports. | `not_started` | — | — | — |
+| `NFR-RS-006` | Offline remote-only play works after episode download; no raw room media appears in logs, backend storage, analytics, or case reports. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `SEC-RS-001` | Raw frames, hand landmarks, room images, and continuous audio never leave the companion; protocols reject media fields/tracks. | `not_started` | — | — | — |
 | `SEC-RS-002` | Pairing/signaling/TURN credentials are one-session, short-lived, revocable, and device-bound. | `not_started` | — | — | — |
 | `SEC-RS-003` | Companion cannot commit puzzle state; TV validates session, puzzle, calibration, freshness, and hold. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
@@ -74,7 +74,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-RS-016` | Given companion-sent `puzzle.complete`, when received, then TV rejects it and logs a security event without raw payload. | `not_started` | — | — | — |
 | `AC-RS-017` | Given duplicate/stale observations, when received, then no duplicate state transition occurs. | `verified` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-RS-018` | Given process death after a completed puzzle, when resumed, then committed state/scene restores without replaying completion. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
-| `AC-RS-019` | Given Bedrock failure, when hint is requested, then authored hint arrives within budget and puzzle state is unchanged. | `not_started` | — | — | — |
+| `AC-RS-019` | Given Bedrock failure, when hint is requested, then authored hint arrives within budget and puzzle state is unchanged. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt` | `packages/puzzle-engine/src/test` | — |
 | `AC-RS-020` | Given revoked companion, when reconnecting, then access/private clues are denied until new approval. | `not_started` | — | — | — |
 | `AC-RS-021` | Given offline mode after content download, when playing remote-only, then all three puzzles and case report complete. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `AC-RS-022` | Given actual Fire TV device/simulator, when demo runs, then real companion observations deterministically change the live episode. | `not_started` | — | — | — |

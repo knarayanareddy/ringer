@@ -1,7 +1,7 @@
 # NextTime
 
 **Track:** Bee
-**Status:** initial consent, minimization, rubric, and skill-state foundation validated locally; Bee/iOS applications not implemented
+**Status:** consent-aware transcript minimization and deterministic foundation validated locally; Bee/iOS applications not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
 NextTime evaluates authentic, consented functional-communication attempts and keeps rehearsal evidence separate from real-world mastery.
@@ -28,7 +28,7 @@ Native iOS, Bee integration, database/transient storage, infrastructure, E2E, an
 | --- | --- |
 | [`SPEC.md`](./SPEC.md) | Canonical requirements and vertical slices |
 | [`schemas/real-world-attempt.schema.json`](./schemas/real-world-attempt.schema.json) | Canonical minimized-attempt contract |
-| [`packages/domain/nexttime_domain/`](./packages/domain/nexttime_domain/) | Consent gates, rubric evaluation, minimization checks, and authentic skill updates |
+| [`packages/domain/nexttime_domain/`](./packages/domain/nexttime_domain/) | Consent gates, learner-only transcript minimization, rubric evaluation, and authentic skill updates |
 | [`packages/contracts/`](./packages/contracts/) | Byte-identical schema copy used by contract tests |
 | [`packages/rubrics/`](./packages/rubrics/) | Draft educator-review-required rubric content |
 | [`tests/`](./tests/) | Unit, schema-contract, and privacy-boundary tests |

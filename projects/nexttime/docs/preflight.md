@@ -1,18 +1,18 @@
 # NextTime preflight
 
-Recorded 2026-10-23 for the initial local foundation. Project code and tests target Python 3.12; the audit-only system interpreter is not a substitute project runtime.
+Recorded 2026-10-23 for the local vertical slices. Project code, tests, builds, fixtures, and audits target Python 3.12; Python 3.11 is not a substitute project runtime.
 
 ## Available and exercised
 
 | Capability | Recorded version/state |
 | --- | --- |
-| Project interpreter | Source-built CPython 3.12.12 with zlib and SQLite support |
+| Project interpreter | Source-built CPython 3.12.12 with zlib 1.3.1, SQLite 3.45.3, and OpenSSL 3.0.19 |
 | Package manager | uv 0.9.5; `uv.lock` is frozen for normal bootstrap |
 | Quality tools | Ruff 0.13.2; mypy 1.18.2; pytest 9.0.3; pytest-cov 6.3.0 |
 | Runtime dependencies | None for the current domain package |
-| Audit-only runner | System CPython 3.11.2 with OpenSSL 3.0.20, used to audit the installed 3.12 site-packages |
+| Audit runner | The same CPython 3.12.12 environment; `pip-audit --skip-editable` completed over TLS |
 
-The source-built 3.12 interpreter lacks `_ssl`, `_bz2`, `_lzma`, and `_ctypes`. Tests, builds, and fixture execution pass, but its own `pip-audit` cannot make TLS requests. The recorded audit therefore used the separate SSL-capable runner against `.venv/lib/python3.12/site-packages`. Normal development should use a complete Python 3.12 installation so `make test-security` is self-contained.
+The restored source-built 3.12 interpreter includes the native modules needed by coverage, package builds, and TLS audits. `make test-security` completed in the project environment without an external audit interpreter. Normal development should likewise use a complete Python 3.12 installation with zlib, SQLite, and SSL/TLS.
 
 ## Blocked or not implemented
 

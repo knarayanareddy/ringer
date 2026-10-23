@@ -6,7 +6,7 @@ Inventory date: 2026-10-23. All current episode values are synthetic development
 | --- | --- | --- | --- |
 | Draft episode graph | `examples/`, `content/episodes/bridge-to-moon-base/` | Authored fictional science content; placeholder hashes | Source-controlled draft; schema/graph tests only |
 | Review registry | `content/episodes/bridge-to-moon-base/reviews.json` | Pending statuses and null reviewers | Publication remains forbidden |
-| Prediction/measurement state | Kotlin tests and walking object | In-memory fictional predictions and coin counts | Process lifetime only; no database/snapshot file |
+| Prediction/measurement state | Kotlin tests and walking object | In-memory fictional predictions, stopped/corrected coin counts, and reflection | Process lifetime only; value snapshots are reconstructed in tests, with no database/snapshot file |
 | Schema copy | `packages/content-compiler/` | Non-sensitive content contract | Byte-identical drift test |
 | Configuration examples | `.env.example` | Safe local placeholders | Real `.env*` files are Git-ignored |
 

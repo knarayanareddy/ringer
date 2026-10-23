@@ -3,22 +3,38 @@ package com.curiolab.episode
 object WalkingSkeleton {
     @JvmStatic
     fun main(args: Array<String>) {
-        val initial = EpisodeState()
-        val afterFlatPrediction = initial.commitPrediction(Trial.FLAT.predictionKey, "folded", 0)
-        val afterFlat = afterFlatPrediction.confirmMeasurement(Trial.FLAT, 3, 1)
-        val afterFoldedPrediction = afterFlat.commitPrediction(Trial.FOLDED.predictionKey, "more", 2)
-        val completed = afterFoldedPrediction.confirmMeasurement(Trial.FOLDED, 7, 3)
-        val summary = completed.measuredSummary()
+        val session = ManualEpisodeSession()
+        session.acknowledgeSafety(
+            adultConsent = true,
+            safetyInstructionsAccepted = true,
+            smallObjectSupervisionConfirmed = true,
+            expectedSequence = 0
+        )
+        session.commitPrediction(Trial.FLAT, "folded", 1)
+        session.markStop(Trial.FLAT, 5, 2)
+        session.confirmStoppedMeasurement(Trial.FLAT, 4, 3)
+
+        val resumed = ManualEpisodeSession(session.snapshot)
+        resumed.commitPrediction(Trial.FOLDED, "more", 4)
+        resumed.markStop(Trial.FOLDED, 7, 5)
+        resumed.confirmStoppedMeasurement(Trial.FOLDED, 7, 6)
+        resumed.acknowledgeComparison(7)
+        resumed.commitReflection("shape_can_matter", 8)
+        val summary = resumed.measuredSummary()
         println(
             """
             {
-              "mode": "FIXTURE ONLY — no Fire TV, companion, camera, relay, or AWS connection",
+              "mode": "FIXTURE MANUAL PATH ONLY — no Fire TV, companion, camera, relay, or AWS connection",
+              "stage": "${resumed.snapshot.stage.name.lowercase()}",
+              "camera_mode": "${resumed.snapshot.cameraMode}",
+              "flat_stopped_count": ${resumed.snapshot.stoppedMeasurements.getValue(Trial.FLAT).lastStableCount},
               "flat_load": ${summary.flatLoad},
               "folded_load": ${summary.foldedLoad},
               "comparison": "${summary.comparison.name.lowercase()}",
-              "branch_node_id": "${summary.comparison.branchNodeId}",
-              "state_sequence": ${completed.stateSequence},
-              "notice": "Deterministic engine walk only; no physical experiment or learning outcome is claimed."
+              "branch_node_id": "${summary.branchNodeId}",
+              "state_sequence": ${resumed.snapshot.sequence},
+              "snapshot_resume_exercised": true,
+              "notice": "In-memory deterministic manual walk only; no durable restart, physical experiment, rendered scene, or learning outcome is claimed."
             }
             """.trimIndent()
         )

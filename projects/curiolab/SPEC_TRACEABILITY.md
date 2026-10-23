@@ -1,6 +1,6 @@
 # CurioLab — Specification Traceability
 
-**Status:** initial local foundation validated; most requirements remain incomplete
+**Status:** local manual-episode slice validated; most requirements remain incomplete
 **Coverage:** 56 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -22,19 +22,19 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | ID | Requirement or scenario summary | Status | Implementation paths | Test paths | Demo/device evidence |
 | --- | --- | --- | --- | --- | --- |
 | `FR-CL-001` | Download, verify, cache, and launch a signed/versioned episode bundle on Fire OS. | `not_started` | — | — | — |
-| `FR-CL-002` | Present adult consent, safety, privacy, accessibility, and camera choices before the first lab. | `not_started` | — | — | — |
+| `FR-CL-002` | Present adult consent, safety, privacy, accessibility, and camera choices before the first lab. | `in_progress` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test` | — |
 | `FR-CL-003` | Pair one companion to a TV session using a short-lived code and scoped credentials. | `not_started` | — | — | — |
-| `FR-CL-004` | Record a prediction before displaying the corresponding experimental result. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
+| `FR-CL-004` | Record a prediction before displaying the corresponding experimental result. | `implemented` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `FR-CL-005` | Guide the exact paper-bridge protocol and verify calibration before camera-assisted counting. | `not_started` | — | — | — |
 | `FR-CL-006` | Produce a stable observed coin count with confidence and occlusion/error states on the companion. | `not_started` | — | — | — |
-| `FR-CL-007` | Freeze the count on the adult's collapse action and require family confirmation or correction before use. | `not_started` | — | — | — |
+| `FR-CL-007` | Freeze the count on the adult's collapse action and require family confirmation or correction before use. | `implemented` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test` | — |
 | `FR-CL-008` | Allow complete manual-remote measurement and non-camera completion. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
-| `FR-CL-009` | Evaluate graph branches deterministically from confirmed predictions and measurements. | `not_started` | — | — | — |
-| `FR-CL-010` | Render scenes with actual measured parameters; do not substitute a canned success value. | `not_started` | — | — | — |
-| `FR-CL-011` | Support a second trial and greater/equal/lower comparison with a variable-change prompt. | `not_started` | — | — | — |
+| `FR-CL-009` | Evaluate graph branches deterministically from confirmed predictions and measurements. | `implemented` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
+| `FR-CL-010` | Render scenes with actual measured parameters; do not substitute a canned success value. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
+| `FR-CL-011` | Support a second trial and greater/equal/lower comparison with a variable-change prompt. | `implemented` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `FR-CL-012` | Provide authored hint fallback and optional schema-bounded Bedrock hints. | `not_started` | — | — | — |
 | `FR-CL-013` | Resume an interrupted session at the last committed node without duplicating measurements. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
-| `FR-CL-014` | Provide captions, scalable UI, reduced motion, remote-only use, and optional push-to-talk prediction input. | `not_started` | — | — | — |
+| `FR-CL-014` | Provide captions, scalable UI, reduced motion, remote-only use, and optional push-to-talk prediction input. | `in_progress` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test` | — |
 | `FR-CL-015` | Delete session artifacts on request and automatically under retention policy. | `not_started` | — | — | — |
 | `FR-CL-016` | Publish only schema-valid, graph-valid, asset-verified, human-approved content. | `in_progress` | `packages/content-compiler` | `tests/unit`<br>`tests/security` | — |
 | `INT-CL-001` | The main episode MUST run in an installable Fire OS application and be demonstrated on an actual Fire TV device or the permitted Fire TV simulator. | `not_started` | — | — | — |
@@ -64,16 +64,16 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-CL-005` | Given missing/misaligned mat markers, when counting, then calibration blocks stable observations. | `not_started` | — | — | — |
 | `AC-CL-006` | Given a stationary valid coin for less than 500 ms, when frames arrive, then it is not added to the stable count. | `not_started` | — | — | — |
 | `AC-CL-007` | Given tracker overlap/occlusion, when confidence drops, then `needs_review` appears and no guessed count is committed. | `not_started` | — | — | — |
-| `AC-CL-008` | Given observed count 5 and adult correction to 4, when confirmed, then all scenes/branches use 4. | `not_started` | — | — | — |
-| `AC-CL-009` | Given manual remote mode, when both trials complete, then the entire episode works without camera/network. | `not_started` | — | — | — |
+| `AC-CL-008` | Given observed count 5 and adult correction to 4, when confirmed, then all scenes/branches use 4. | `implemented` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
+| `AC-CL-009` | Given manual remote mode, when both trials complete, then the entire episode works without camera/network. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
 | `AC-CL-010` | Given flat=3 and folded=7, when comparing, then greater branch and exact values render. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-CL-011` | Given flat=4 and folded=4, when comparing, then equal branch renders. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-CL-012` | Given flat=6 and folded=2, when comparing, then lower branch renders without assuming a universal outcome. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-CL-013` | Given duplicate confirmation messages, when processed, then one state transition occurs. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
-| `AC-CL-014` | Given process death after confirmation, when reopened, then the last committed node/value resumes. | `not_started` | — | — | — |
+| `AC-CL-014` | Given process death after confirmation, when reopened, then the last committed node/value resumes. | `in_progress` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test` | — |
 | `AC-CL-015` | Given Bedrock timeout/malformed output, when hint requested, then the authored hint appears within budget. | `not_started` | — | — | — |
 | `AC-CL-016` | Given ambiguous voice, when transcribed, then no prediction is selected and remote options remain. | `not_started` | — | — | — |
 | `AC-CL-017` | Given reduced-motion/no-timing settings, when playing, then all content remains completable and understandable. | `not_started` | — | — | — |
-| `AC-CL-018` | Given a network outage after bundle download, when playing manually, then story/branches/summary still work. | `not_started` | — | — | — |
+| `AC-CL-018` | Given a network outage after bundle download, when playing manually, then story/branches/summary still work. | `in_progress` | `packages/episode-engine` | `packages/episode-engine/src/test` | — |
 | `AC-CL-019` | Given deletion request, when jobs finish, then cloud session/hint/voice artifacts are absent and local cache can be cleared. | `not_started` | — | — | — |
 | `AC-CL-020` | Given a real Fire TV device/simulator, when running the demo, then the installed app consumes real companion observations and changes the scene accordingly. | `not_started` | — | — | — |

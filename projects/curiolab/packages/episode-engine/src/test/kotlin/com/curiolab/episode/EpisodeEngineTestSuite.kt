@@ -13,6 +13,15 @@ object EpisodeEngineTestSuite {
         .commitPrediction(Trial.FLAT.predictionKey, "unsure", 0)
         .commitPrediction(Trial.FOLDED.predictionKey, "unsure", 1)
 
+    private fun manualFlatConfirmed(): ManualEpisodeSession {
+        val session = ManualEpisodeSession()
+        session.acknowledgeSafety(true, true, true, 0)
+        session.commitPrediction(Trial.FLAT, "folded", 1)
+        session.markStop(Trial.FLAT, 5, 2)
+        session.confirmStoppedMeasurement(Trial.FLAT, 4, 3)
+        return session
+    }
+
     @JvmStatic
     fun main(args: Array<String>) {
         expect("measurement requires a prior prediction") {
@@ -71,6 +80,59 @@ object EpisodeEngineTestSuite {
             val resumed = committed.copy()
             check(resumed.measuredSummary() == committed.measuredSummary())
             check(resumed.confirmMeasurement(Trial.FOLDED, 100, 3) == resumed)
+        }
+        expect("manual consent stop and correction gate the exact scene value") {
+            val session = ManualEpisodeSession()
+            session.acknowledgeSafety(false, true, true, 0)
+            check(session.snapshot.stage == ManualStage.SAFETY_AND_CONSENT)
+            check(runCatching { session.commitPrediction(Trial.FLAT, "folded", 0) }.isFailure)
+            session.acknowledgeSafety(true, true, true, 0)
+            session.commitPrediction(Trial.FLAT, "folded", 1)
+            check(runCatching { session.flatResultSceneParameters() }.isFailure)
+            check(runCatching { session.confirmStoppedMeasurement(Trial.FLAT, 4, 2) }.isFailure)
+            session.markStop(Trial.FLAT, 5, 2)
+            session.confirmStoppedMeasurement(Trial.FLAT, 4, 3)
+            check(session.flatResultSceneParameters()["load_count"] == 4)
+            check(session.snapshot.stoppedMeasurements.getValue(Trial.FLAT).lastStableCount == 5)
+        }
+        expect("manual snapshot resumes and completes with measured reflection") {
+            val resumed = ManualEpisodeSession(manualFlatConfirmed().snapshot)
+            check(resumed.snapshot.stage == ManualStage.FOLDED_PREDICTION)
+            resumed.commitPrediction(Trial.FOLDED, "more", 4)
+            resumed.markStop(Trial.FOLDED, 2, 5)
+            resumed.confirmStoppedMeasurement(Trial.FOLDED, 2, 6)
+            resumed.acknowledgeComparison(7)
+            resumed.commitReflection("shape_can_matter", 8)
+            val summary = resumed.measuredSummary()
+            check(summary.flatLoad == 4 && summary.foldedLoad == 2)
+            check(summary.comparison == ComparisonResult.LOWER)
+            check(summary.foldedPredictionMatched == false)
+            check(summary.variableChangePrompt.contains("one comparison"))
+            check(resumed.snapshot.sequence == 9L)
+        }
+        expect("manual duplicate stop and confirmation are idempotent") {
+            val session = ManualEpisodeSession()
+            session.acknowledgeSafety(true, true, true, 0)
+            session.commitPrediction(Trial.FLAT, "same", 1)
+            session.markStop(Trial.FLAT, 3, 2)
+            val stopped = session.snapshot
+            check(session.markStop(Trial.FLAT, 3, 2) == stopped)
+            check(runCatching { session.markStop(Trial.FLAT, 4, 3) }.isFailure)
+            session.confirmStoppedMeasurement(Trial.FLAT, 3, 3)
+            val confirmed = session.snapshot
+            check(session.confirmStoppedMeasurement(Trial.FLAT, 3, 3) == confirmed)
+        }
+        expect("manual stale sequences and out-of-range counts fail") {
+            val session = manualFlatConfirmed()
+            check(runCatching { session.commitPrediction(Trial.FOLDED, "more", 3) }.isFailure)
+            session.commitPrediction(Trial.FOLDED, "more", 4)
+            check(runCatching { session.markStop(Trial.FOLDED, 31, 5) }.isFailure)
+            session.markStop(Trial.FOLDED, 7, 5)
+            check(runCatching { session.confirmStoppedMeasurement(Trial.FOLDED, 7, 4) }.isFailure)
+            check(runCatching { session.acknowledgeComparison(6) }.isFailure)
+        }
+        expect("manual summary requires the completed reflection") {
+            check(runCatching { manualFlatConfirmed().measuredSummary() }.isFailure)
         }
         println("PASS $passed Kotlin episode-engine tests")
     }

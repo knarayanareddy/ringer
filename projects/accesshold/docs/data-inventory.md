@@ -1,6 +1,6 @@
 # AccessHold data inventory
 
-Inventory date: 2026-10-23. This describes the initial foundation, not a production data-flow assessment.
+Inventory date: 2026-10-23. This describes the current local slices, not a production data-flow assessment.
 
 | Data | Current location | Classification/provenance | Retention and use |
 | --- | --- | --- | --- |
@@ -8,6 +8,7 @@ Inventory date: 2026-10-23. This describes the initial foundation, not a product
 | Draft feature definitions | `content/feature-registry/v1.json` | Authored development content; unverified provider/physical claims | Source-controlled draft; predicate evaluation only |
 | Canonical schema copies | `schemas/`, `packages/contracts/` | Non-sensitive contract definitions | Source-controlled; byte-drift tests |
 | Recovery fixture inputs | `scripts/`, `tests/` | Synthetic states and confirmation flags | No persistence or external action |
+| Manual contract versions | `services/importer/`, unit tests, walking-path temporary JSON | Synthetic draft/active versions and traveler-scoped fixture IDs | Local append-only fixture history; temporary walking/test directories are removed; not production storage |
 | Configuration examples | `.env.example` | Safe placeholders, no credentials | `.env.local` and real environment files are Git-ignored |
 
 ## Not present or collected

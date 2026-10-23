@@ -1,4 +1,5 @@
 import json
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,13 @@ from .models import (
 )
 from .rubric import evaluate_authentic_attempt, rubric_from_mapping
 from .skills import update_skill_from_authentic_attempt
+from .transcripts import (
+    CaptureMode,
+    SourceTranscript,
+    Speaker,
+    TranscriptMinimizationService,
+    TranscriptTurn,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -49,11 +57,47 @@ def main() -> None:
         CriterionResult.SATISFIED,
         confirmed_authentic_attempt=document["status"] == "confirmed",
     )
+    minimization_service = TranscriptMinimizationService()
+    source = SourceTranscript(
+        reference="fixture-bee-recording-walking-001",
+        learner_id=document["learner_id"],
+        recorded_at=datetime(2026, 10, 22, 15, 0, tzinfo=UTC),
+        capture_mode=CaptureMode.CONSENTED_CONVERSATION,
+        situation=Situation.REPAIR,
+        turns=(
+            TranscriptTurn(
+                Speaker.LEARNER,
+                "Ik wil een afspraak voor de reparatie.",
+                0,
+                1200,
+                0.91,
+            ),
+            TranscriptTurn(
+                Speaker.OTHER,
+                "Fixture other-speaker text that must be excluded.",
+                1200,
+                2400,
+                0.93,
+            ),
+        ),
+        consent_attested=True,
+        all_participants_consented=True,
+        revoked=False,
+        retention_policy_present=True,
+    )
+    minimized = minimization_service.minimize(
+        source, minimized_at=source.recorded_at + timedelta(hours=1)
+    )
+    duplicate_safe = minimization_service.minimize(source) is minimized
     print(
         json.dumps(
             {
                 "mode": "FIXTURE ONLY — no Bee, AWS, or iOS connection",
                 "rubric_version": rubric.version,
+                "minimization_status": minimized.status,
+                "minimized_self_excerpts": len(minimized.self_excerpts),
+                "other_speaker_transcript_retained": minimized.other_speaker_transcript_retained,
+                "duplicate_source_safe": duplicate_safe,
                 "outcome": outcome.status.value,
                 "confirmation_required": outcome.confirmation_required,
                 "reason_codes": outcome.reason_codes,
