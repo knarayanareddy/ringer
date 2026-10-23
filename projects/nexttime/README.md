@@ -1,30 +1,42 @@
 # NextTime
 
 **Track:** Bee
-**Status:** specification and low-fidelity design ready; implementation not started
+**Status:** initial consent, minimization, rubric, and skill-state foundation validated locally; Bee/iOS applications not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
-NextTime is consented real-world language-attempt review and just-in-time Dutch rehearsal.
+NextTime evaluates authentic, consented functional-communication attempts and keeps rehearsal evidence separate from real-world mastery.
+
+## Local foundation
+
+Requirements: Python 3.12, `uv`, and `make`. Dependencies are locked in `uv.lock`; runtime domain code has no third-party runtime dependency.
+
+```bash
+make setup                 # uv sync --frozen and safe .env.local
+make dev                   # fictional minimized-attempt fixture
+make lint typecheck
+make test-unit test-contract test-security
+make build
+```
+
+Unit tests enforce at least 90% branch-aware domain coverage. `make test-security` runs privacy tests and `pip-audit --skip-editable`; the editable local distribution is not a third-party dependency. The audit runner needs working SSL/TLS.
+
+Native iOS, Bee integration, database/transient storage, infrastructure, E2E, and deployment targets intentionally fail while their real implementations are absent.
 
 ## Workspace map
 
 | Path | Purpose |
 | --- | --- |
-| [`AGENTS.md`](./AGENTS.md) | Assignment, ownership boundaries, safeguards, preflight, and completion gate |
-| [`SPEC.md`](./SPEC.md) | Canonical implementation specification and vertical slices |
-| [`schemas/real-world-attempt.schema.json`](./schemas/real-world-attempt.schema.json) | Canonical machine-readable contract |
-| [`examples/real-world-attempt.example.json`](./examples/real-world-attempt.example.json) | Validated fictional fixture/draft instance, not real evidence |
-| [`ui/`](./ui/) | Product truth, design system, tokens, theme, and static low-fidelity wireframes |
-| [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) | Complete requirement/acceptance register; currently not started |
-| [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md) | Controlled deviation log; currently empty |
-| [`../../specs/SHARED_ENGINEERING_STANDARD.md`](../../specs/SHARED_ENGINEERING_STANDARD.md) | Shared release-blocking engineering requirements |
+| [`SPEC.md`](./SPEC.md) | Canonical requirements and vertical slices |
+| [`schemas/real-world-attempt.schema.json`](./schemas/real-world-attempt.schema.json) | Canonical minimized-attempt contract |
+| [`packages/domain/nexttime_domain/`](./packages/domain/nexttime_domain/) | Consent gates, rubric evaluation, minimization checks, and authentic skill updates |
+| [`packages/contracts/`](./packages/contracts/) | Byte-identical schema copy used by contract tests |
+| [`packages/rubrics/`](./packages/rubrics/) | Draft educator-review-required rubric content |
+| [`tests/`](./tests/) | Unit, schema-contract, and privacy-boundary tests |
+| [`docs/`](./docs/) | Preflight, architecture, data inventory, dependencies, and validation |
+| [`ui/`](./ui/) | Static design guidance, not an iOS application |
 
-## Implementation status
+## External blockers
 
-No application source, production runtime, credentials, live integration, device run, or user study exists in this workspace. The implementation agent creates the `apps/`, `services/`, `packages/`, `infra/`, `tests/`, `docs/`, and `evidence/` structure required by `SPEC.md` as appropriate to this project.
+Actual Bee/Apple Watch and documented CLI/MCP connectivity, iOS/Swift tooling, Polly/Transcribe/Bedrock, persistence/deletion workers, participants, accent/device evaluation, and release evidence remain blocked or unimplemented. The fixture returns an unconfirmed partial outcome and does not update authentic skill state.
 
-The static UI is opened through [`ui/wireframe.html`](./ui/wireframe.html). It uses shared review primitives from `specs/ui/`; it is not a production frontend.
-
-## Parallel-agent rule
-
-This folder is the only implementation workspace owned by the NextTime agent. Keep other projects and shared contracts unchanged. External credentials, devices, partnerships, datasets, and human approvals listed in `AGENTS.md` remain explicit blockers until genuinely available.
+Maintain [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) and [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md). Never use rehearsal or fixture data as authentic learner progress.

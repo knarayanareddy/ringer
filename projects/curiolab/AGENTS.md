@@ -6,7 +6,7 @@ You are the implementation agent for **CurioLab only**. Your project root is `pr
 
 Build a Fire OS science episode driven by family-confirmed household measurements. The primary hackathon track is **Fire TV**.
 
-Current state: canonical specification, schemas/examples, and low-fidelity UI contracts exist. Application implementation, live integrations, device evidence, and user evidence have not been created.
+Current state: canonical specification, schemas/examples, low-fidelity UI contracts, and an initial locally validated domain/content foundation exist. Applications, live integrations, device evidence, user evidence, and most release gates remain incomplete; see `docs/validation.md`.
 
 ## Read these files first
 

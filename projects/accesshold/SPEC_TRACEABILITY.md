@@ -1,8 +1,8 @@
 # AccessHold — Specification Traceability
 
-**Status:** implementation not started
+**Status:** initial local foundation validated; most requirements remain incomplete
 **Coverage:** 56 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
-**Evidence warning:** every path/status is currently empty or `not_started`; no implementation or evidence is implied.
+**Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
 This is the working register required by the implementation specification. Requirement summaries aid navigation only; `SPEC.md` remains normative.
 
@@ -24,7 +24,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-AH-001` | Import a booking from a traveler-authorized confirmation email or manual structured entry. | `not_started` | — | — | — |
 | `FR-AH-002` | Extract trip/assets into a reviewable draft; no monitoring begins before traveler approval. | `not_started` | — | — | — |
 | `FR-AH-003` | Capture hard constraints and preferences with traveler wording, deterministic predicates, and applicable assets. | `not_started` | — | — | — |
-| `FR-AH-004` | Validate and persist an Access Contract using the canonical schema. | `not_started` | — | — | — |
+| `FR-AH-004` | Validate and persist an Access Contract using the canonical schema. | `in_progress` | `packages/contracts` | `tests/contract` | — |
 | `FR-AH-005` | Attach source-specific, timestamped evidence to exact assets; expired evidence becomes stale/unverified. | `not_started` | — | — | — |
 | `FR-AH-006` | Draft provider verification questions and send them only after approval. | `not_started` | — | — | — |
 | `FR-AH-007` | Monitor authorized email and configured provider feeds for changes, deduplicate them, and version affected assets. | `not_started` | — | — | — |
@@ -32,7 +32,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-AH-009` | Generate recovery options with evidence coverage, cost, terms, unknowns, and a no-action option. | `not_started` | — | — | — |
 | `FR-AH-010` | Require explicit, plan-bound approval before any external recovery action. | `not_started` | — | — | — |
 | `FR-AH-011` | Execute an approved provider request or supported provider action idempotently and record its receipt/status. | `not_started` | — | — | — |
-| `FR-AH-012` | Mark recovery complete only after importing a replacement confirmation and revalidating the contract. | `not_started` | — | — | — |
+| `FR-AH-012` | Mark recovery complete only after importing a replacement confirmation and revalidating the contract. | `in_progress` | `packages/domain` | `tests/unit` | — |
 | `FR-AH-013` | Provide Alexa+ tools and rich cards for status, evidence, changes, recovery options, approval, and handoff. | `not_started` | — | — | — |
 | `FR-AH-014` | Provide a human-handoff packet containing the itinerary, constraints, evidence, attempted actions, and unknowns. | `not_started` | — | — | — |
 | `FR-AH-015` | Support contract/trip export, correction, revocation, and deletion. | `not_started` | — | — | — |
@@ -59,18 +59,18 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `SEC-AH-008` | Rights disputes, emergencies, medical needs, and ambiguous provider responses route to a human without automated assertions. | `not_started` | — | — | — |
 | `AC-AH-001` | Given an unreviewed import, when monitoring starts prematurely, then activation is rejected. | `not_started` | — | — | — |
 | `AC-AH-002` | Given ambiguous dates/time zones, when extraction completes, then the fields require correction rather than guessing. | `not_started` | — | — | — |
-| `AC-AH-003` | Given a valid contract, when serialized, then it passes the canonical schema and round-trips without semantic changes. | `not_started` | — | — | — |
-| `AC-AH-004` | Given a numeric requirement and different units, when evaluated, then normalization produces the expected result. | `not_started` | — | — | — |
-| `AC-AH-005` | Given missing evidence, when a feature is evaluated, then status is unknown/degraded, not satisfied. | `not_started` | — | — | — |
+| `AC-AH-003` | Given a valid contract, when serialized, then it passes the canonical schema and round-trips without semantic changes. | `verified` | `packages/contracts` | `tests/contract`<br>`docs/validation.md` | — |
+| `AC-AH-004` | Given a numeric requirement and different units, when evaluated, then normalization produces the expected result. | `verified` | `packages/policy-engine` | `tests/unit`<br>`docs/validation.md` | — |
+| `AC-AH-005` | Given missing evidence, when a feature is evaluated, then status is unknown/degraded, not satisfied. | `verified` | `packages/policy-engine` | `tests/unit`<br>`docs/validation.md` | — |
 | `AC-AH-006` | Given a review claiming a feature, when ingested, then it cannot become provider-confirmed evidence. | `not_started` | — | — | — |
-| `AC-AH-007` | Given expired evidence, when its expiry passes, then dependent contracts become degraded. | `not_started` | — | — | — |
+| `AC-AH-007` | Given expired evidence, when its expiry passes, then dependent contracts become degraded. | `verified` | `packages/policy-engine` | `tests/unit`<br>`docs/validation.md` | — |
 | `AC-AH-008` | Given duplicate provider events, when consumed twice, then one asset version/case results. | `not_started` | — | — | — |
 | `AC-AH-009` | Given an aircraft swap removing a hard feature, when evaluated, then a case opens and dependent transfer options are re-evaluated. | `not_started` | — | — | — |
 | `AC-AH-010` | Given an aircraft change retaining all hard features, when evaluated, then no false violation is opened. | `not_started` | — | — | — |
 | `AC-AH-011` | Given a changed price or inventory after options display, when approval arrives, then it is rejected as stale. | `not_started` | — | — | — |
 | `AC-AH-012` | Given approval for plan A, when submitted for plan B, then execution is denied. | `not_started` | — | — | — |
 | `AC-AH-013` | Given a repeated execution request, when retried, then only one external action/receipt exists. | `not_started` | — | — | — |
-| `AC-AH-014` | Given SES request acceptance, when checking status, then the case is awaiting confirmation, not completed. | `not_started` | — | — | — |
+| `AC-AH-014` | Given SES request acceptance, when checking status, then the case is awaiting confirmation, not completed. | `verified` | `packages/domain` | `tests/unit`<br>`docs/validation.md` | — |
 | `AC-AH-015` | Given a replacement confirmation with an unresolved hard constraint, when imported, then the case reopens. | `not_started` | — | — | — |
 | `AC-AH-016` | Given a valid replacement confirmation, when revalidated, then calendar update and completion occur once. | `not_started` | — | — | — |
 | `AC-AH-017` | Given a view-only advocate, when requesting evidence outside scope, then access is denied and audited. | `not_started` | — | — | — |

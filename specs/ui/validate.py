@@ -322,7 +322,7 @@ def validate_html(errors: list[str], report: dict) -> None:
 def validate_markdown(errors: list[str], report: dict) -> None:
     checked = 0
     for document in sorted(REPO_ROOT.glob("**/*.md")):
-        if "node_modules" in document.parts or ".git" in document.parts:
+        if {"node_modules", ".git", ".venv"}.intersection(document.parts):
             continue
         text = document.read_text(encoding="utf-8")
         for match in MARKDOWN_LINK_RE.finditer(text):
