@@ -11,6 +11,7 @@ from .models import (
     Situation,
     SkillState,
 )
+from .review import AttemptReviewService, BreakdownReviewDecision
 from .rubric import evaluate_authentic_attempt, rubric_from_mapping
 from .skills import update_skill_from_authentic_attempt
 from .transcripts import (
@@ -89,6 +90,19 @@ def main() -> None:
         source, minimized_at=source.recorded_at + timedelta(hours=1)
     )
     duplicate_safe = minimization_service.minimize(source) is minimized
+    reviewed_service = AttemptReviewService(document, rubric)
+    reviewed_service.review_breakdown(
+        actor_learner_id=document["learner_id"],
+        expected_version=document["version"],
+        breakdown_id=document["breakdowns"][0]["breakdown_id"],
+        decision=BreakdownReviewDecision.CONFIRMED,
+        reviewed_at=datetime(2026, 10, 22, 16, 0, tzinfo=UTC),
+    )
+    reviewed = reviewed_service.confirm_attempt(
+        actor_learner_id=document["learner_id"],
+        expected_version=document["version"] + 1,
+        reviewed_at=datetime(2026, 10, 22, 16, 0, tzinfo=UTC),
+    )
     print(
         json.dumps(
             {
@@ -104,6 +118,14 @@ def main() -> None:
                 "authentic_skill_update": unchanged_skill != initial_skill,
                 "notice": (
                     "No authentic progress is inferred from this unconfirmed fixture attempt."
+                ),
+                "reviewed_status": reviewed.document["status"],
+                "reviewed_outcome": reviewed.document["outcome"]["status"],
+                "reviewed_skill_updates": reviewed.skill_updates,
+                "reviewed_confirmation_beta": reviewed.skill_states["confirmation"].beta,
+                "reviewed_notice": (
+                    "A separate fixture-only reviewed copy updates the confirmed "
+                    "breakdown once; no real learner or persistent learner store is involved."
                 ),
             },
             indent=2,

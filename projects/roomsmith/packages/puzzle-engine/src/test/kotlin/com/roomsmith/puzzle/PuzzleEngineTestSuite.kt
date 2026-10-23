@@ -1,5 +1,7 @@
 package com.roomsmith.puzzle
 
+import java.nio.file.Files
+
 object PuzzleEngineTestSuite {
     private var passed = 0
 
@@ -291,6 +293,103 @@ object PuzzleEngineTestSuite {
                     )
                 )
             }.isFailure)
+        }
+        expect("atomic fixture file reopens remote hints and completions") {
+            val directory = Files.createTempDirectory("roomsmith-episode-test-")
+            val path = directory.resolve("episode.snapshot")
+            try {
+                val store = RemoteEpisodeFileStore(path)
+                val session = remoteSession(noTiming = true)
+                session.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 0)
+                session.authoredHint("raise_the_shield", 1, 1)
+                store.save(session.snapshot)
+                val firstBytes = Files.readAllBytes(path)
+                store.save(session.snapshot)
+                check(Files.readAllBytes(path).contentEquals(firstBytes))
+
+                val reopenedSnapshot = RemoteEpisodeFileStore(path).load()
+                check(reopenedSnapshot == session.snapshot)
+                val resumed = remoteSession(noTiming = true, snapshot = reopenedSnapshot)
+                resumed.submitRemote("raise_the_shield", listOf("option_shield"), 1, 10)
+                resumed.recordActiveTime(1200)
+                resumed.submitRemote("lens_archive_sequence", listOf("option_lens_then_archive"), 2, 20)
+                store.save(resumed.snapshot)
+
+                val completed = remoteSession(
+                    noTiming = true,
+                    snapshot = RemoteEpisodeFileStore(path).load()
+                )
+                check(completed.caseReport() == resumed.caseReport())
+                check(completed.snapshot.hintsUsed["raise_the_shield"] == 1)
+                check(Files.list(directory).use { it.count() } == 1L)
+            } finally {
+                Files.deleteIfExists(path)
+                Files.deleteIfExists(directory)
+            }
+        }
+        expect("reopening cannot bypass a transient remote hold") {
+            val directory = Files.createTempDirectory("roomsmith-hold-test-")
+            val path = directory.resolve("episode.snapshot")
+            try {
+                val store = RemoteEpisodeFileStore(path)
+                val session = remoteSession()
+                session.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 0)
+                check(session.submitRemote("raise_the_shield", listOf("option_shield"), 1, 100).isEmpty())
+                store.save(session.snapshot)
+
+                val resumed = remoteSession(snapshot = RemoteEpisodeFileStore(path).load())
+                check(resumed.submitRemote("raise_the_shield", listOf("option_shield"), 1, 850).isEmpty())
+                check(resumed.submitRemote("raise_the_shield", listOf("option_shield"), 1, 1600).size == 1)
+            } finally {
+                Files.deleteIfExists(path)
+                Files.deleteIfExists(directory)
+            }
+        }
+        expect("malformed or camera-bearing remote snapshots fail closed") {
+            val directory = Files.createTempDirectory("roomsmith-snapshot-validation-")
+            val path = directory.resolve("episode.snapshot")
+            try {
+                val store = RemoteEpisodeFileStore(path)
+                val session = remoteSession()
+                session.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 0)
+                store.save(session.snapshot)
+                val valid = Files.readAllBytes(path)
+                val invalidMagic = valid.copyOf()
+                invalidMagic[0] = 'X'.code.toByte()
+                Files.write(path, invalidMagic)
+                check(runCatching { store.load() }.isFailure)
+
+                Files.write(path, valid.copyOf(valid.size - 1))
+                check(runCatching { store.load() }.isFailure)
+                Files.write(path, valid + 0)
+                check(runCatching { store.load() }.isFailure)
+                val invalidChecksum = valid.copyOf()
+                invalidChecksum[invalidChecksum.lastIndex] =
+                    (invalidChecksum.last().toInt() xor 1).toByte()
+                Files.write(path, invalidChecksum)
+                check(runCatching { store.load() }.isFailure)
+                val unsupportedVersion = valid.copyOf()
+                unsupportedVersion[11] = 2
+                Files.write(path, unsupportedVersion)
+                check(runCatching { store.load() }.isFailure)
+
+                Files.write(path, valid)
+                check(runCatching {
+                    store.save(RemoteEpisodeSnapshot(engineState = EngineState(stateSequence = 1)))
+                }.isFailure)
+                val camera = CompletedPuzzle("lighthouse_alignment", CompletionPath.CAMERA, 1, 4)
+                check(runCatching {
+                    store.save(
+                        RemoteEpisodeSnapshot(
+                            engineState = EngineState(1, mapOf(camera.puzzleId to camera))
+                        )
+                    )
+                }.isFailure)
+                check(Files.readAllBytes(path).contentEquals(valid))
+            } finally {
+                Files.deleteIfExists(path)
+                Files.deleteIfExists(directory)
+            }
         }
         println("PASS $passed Kotlin puzzle-engine tests")
     }

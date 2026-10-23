@@ -51,9 +51,46 @@ class ManualEpisodeSession(initialSnapshot: ManualEpisodeSnapshot = ManualEpisod
         require(snapshot.accessibilityMode in accessibilityModes) { "Unknown accessibility mode" }
         require(snapshot.sequence >= 0) { "Snapshot sequence cannot be negative" }
         require(snapshot.episode.stateSequence <= snapshot.sequence) { "Invalid snapshot sequences" }
+        require(snapshot.sequence == snapshot.stage.ordinal.toLong()) {
+            "Manual stage and sequence do not match"
+        }
         require((snapshot.stage == ManualStage.COMPLETE) == (snapshot.reflection != null)) {
             "Completion and reflection must be committed together"
         }
+        require(snapshot.reflection == null || snapshot.reflection in setOf("shape_can_matter", "not_sure")) {
+            "Reflection is not authored"
+        }
+        snapshot.stoppedMeasurements.forEach { (trial, stopped) ->
+            require(stopped.trial == trial) { "Stopped measurement trial does not match its key" }
+            require(stopped.lastStableCount in 0..30) { "Stopped count is outside declared bounds" }
+            require(trial.predictionKey in snapshot.episode.predictions) { "Stop requires its prediction" }
+        }
+        Trial.entries.forEach { trial ->
+            if (trial.measurementKey in snapshot.episode.measurements) {
+                require(trial in snapshot.stoppedMeasurements) { "Confirmed measurement requires its stop" }
+            }
+        }
+        val expectedPredictions = when (snapshot.stage) {
+            ManualStage.SAFETY_AND_CONSENT, ManualStage.FLAT_PREDICTION -> 0
+            ManualStage.FLAT_LAB, ManualStage.FLAT_CONFIRMATION, ManualStage.FOLDED_PREDICTION -> 1
+            else -> 2
+        }
+        val expectedMeasurements = when (snapshot.stage) {
+            ManualStage.FOLDED_PREDICTION, ManualStage.FOLDED_LAB, ManualStage.FOLDED_CONFIRMATION -> 1
+            ManualStage.COMPARISON, ManualStage.REFLECTION, ManualStage.COMPLETE -> 2
+            else -> 0
+        }
+        val expectedStops = when (snapshot.stage) {
+            ManualStage.FLAT_CONFIRMATION, ManualStage.FOLDED_PREDICTION, ManualStage.FOLDED_LAB -> 1
+            ManualStage.FOLDED_CONFIRMATION, ManualStage.COMPARISON, ManualStage.REFLECTION, ManualStage.COMPLETE -> 2
+            else -> 0
+        }
+        require(snapshot.episode.predictions.size == expectedPredictions) { "Predictions do not match the stage" }
+        require(snapshot.episode.measurements.size == expectedMeasurements) { "Measurements do not match the stage" }
+        require(snapshot.stoppedMeasurements.size == expectedStops) { "Stops do not match the stage" }
+        if (expectedPredictions == 1) require(Trial.FLAT.predictionKey in snapshot.episode.predictions)
+        if (expectedMeasurements == 1) require(Trial.FLAT.measurementKey in snapshot.episode.measurements)
+        if (expectedStops == 1) require(Trial.FLAT in snapshot.stoppedMeasurements)
     }
 
     private fun requireStage(expected: ManualStage) {

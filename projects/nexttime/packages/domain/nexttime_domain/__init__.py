@@ -1,4 +1,5 @@
 from .consent import ConsentError, require_processing_consent
+from .minimization import validate_minimized_attempt
 from .models import (
     AttemptEvaluationInput,
     CriterionEvidence,
@@ -8,6 +9,12 @@ from .models import (
     Rubric,
     Situation,
     SkillState,
+)
+from .review import (
+    AttemptReviewResult,
+    AttemptReviewService,
+    BreakdownReviewDecision,
+    CriterionCorrection,
 )
 from .rubric import evaluate_authentic_attempt, rubric_from_mapping
 from .skills import apply_partial_authentic_evidence, update_skill_from_authentic_attempt
@@ -25,7 +32,11 @@ from .transcripts import (
 
 __all__ = [
     "AttemptEvaluationInput",
+    "AttemptReviewResult",
+    "AttemptReviewService",
+    "BreakdownReviewDecision",
     "CaptureMode",
+    "CriterionCorrection",
     "ConsentError",
     "CriterionEvidence",
     "CriterionResult",
@@ -47,4 +58,5 @@ __all__ = [
     "require_processing_consent",
     "rubric_from_mapping",
     "update_skill_from_authentic_attempt",
+    "validate_minimized_attempt",
 ]

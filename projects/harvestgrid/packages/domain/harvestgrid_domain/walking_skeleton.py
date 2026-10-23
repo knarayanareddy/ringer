@@ -1,5 +1,7 @@
 import json
+from copy import deepcopy
 from datetime import UTC, datetime, timedelta
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -7,6 +9,7 @@ from harvestgrid_domain_matching import Candidate, HardConstraints, RankingFeatu
 
 from .forecast import validate_harvest_window
 from .operations import GleanWorkflow, RestrictedLocation
+from .outcomes import CompletionEntry, RejectionReason, WeightEntry, WeightSource
 
 ROOT = Path(__file__).resolve().parents[3]
 T0 = datetime(2026, 10, 23, 12, 0, tzinfo=UTC)
@@ -74,6 +77,7 @@ def main() -> None:
         "FIXTURE ONLY — not a residential address", "Fixture access note"
     )
     workflow.reveal_location(actor_id=selected, location=restricted, at=reveal_start)
+    outcome_workflow = GleanWorkflow(deepcopy(workflow.snapshot))
     cancelled = workflow.cancel(
         actor_id="owner-fixture",
         reason="owner_consent_revoked",
@@ -90,6 +94,45 @@ def main() -> None:
         reveal_after_cancellation = False
     else:
         raise AssertionError("Cancelled workflow must not reveal a restricted location")
+
+    entry = CompletionEntry(
+        recipient_id="recipient-fixture",
+        actual_harvested_at=T0 + timedelta(minutes=15),
+        visible_fruit_count=40,
+        weight=WeightEntry(
+            gross_weight_kg=Decimal("10.0"),
+            net_weight_kg=Decimal("8.5"),
+            accepted_weight_kg=Decimal("8.0"),
+            rejected_weight_kg=Decimal("0.5"),
+            source=WeightSource.CALIBRATED_SCALE,
+            scale_reference="fixture-scale-01",
+            rejection_reasons=(RejectionReason.SPOILED,),
+            evidence_sha256="a" * 64,
+        ),
+    )
+    outcome_workflow.record_completion(
+        actor_id=selected,
+        entry=entry,
+        expected_version=5,
+        at=T0 + timedelta(minutes=20),
+    )
+    verified = outcome_workflow.verify_completion(
+        actor_id="coordinator-fixture",
+        forecast_document=document,
+        expected_version=6,
+        at=T0 + timedelta(minutes=25),
+    )
+    closed = outcome_workflow.close_outcome(
+        actor_id="coordinator-fixture",
+        expected_version=7,
+        at=T0 + timedelta(minutes=30),
+    )
+    if verified.weight_record is None:
+        raise AssertionError("Verified weight record is required")
+    if verified.donation_receipt is None:
+        raise AssertionError("Donation receipt is required")
+    if verified.forecast_evaluation is None:
+        raise AssertionError("Forecast evaluation is required")
 
     print(
         json.dumps(
@@ -114,9 +157,20 @@ def main() -> None:
                 "location_reveal_after_cancellation": reveal_after_cancellation,
                 "notification_adapter_connected": False,
                 "durable_workflow_claimed": False,
+                "outcome_workflow_state": closed.state.value,
+                "verified_accepted_weight_kg": str(verified.weight_record.entry.accepted_weight_kg),
+                "donation_receipt": verified.donation_receipt.as_non_sensitive_dict(),
+                "visible_count_absolute_error": (
+                    verified.forecast_evaluation.visible_count_absolute_error
+                ),
+                "forecast_evaluation_reasons": verified.forecast_evaluation.reason_codes,
+                "automatic_model_promotion": (
+                    verified.forecast_evaluation.automatic_model_promotion
+                ),
                 "notice": (
-                    "In-memory forecast and operations fixtures only; no actual invitation, "
-                    "residential location, glean, deletion job, or operational outcome is claimed."
+                    "Separate in-memory revocation and coordinator-verified outcome fixtures only; "
+                    "no actual invitation, residential location, glean, donation, deletion job, "
+                    "model promotion, or operational outcome is claimed."
                 ),
             },
             indent=2,
