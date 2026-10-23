@@ -1,7 +1,7 @@
 # AccessHold
 
 **Track:** Alexa+
-**Status:** initial deterministic foundation validated locally; application and live integrations not implemented
+**Status:** manual fixture-contract slice and deterministic foundation validated locally; application and live integrations not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
 AccessHold is post-booking accessibility evidence monitoring and explicitly approved disruption recovery. Its output describes workflow evidence, never a guarantee of physical accessibility.
@@ -20,7 +20,7 @@ make build
 
 `make test-security` also audits the locked npm dependency graph. `make test-integration`, `make test-e2e`, `make test-infra`, and `make deploy` intentionally fail while their real dependencies are absent.
 
-The current fixture evaluates contract predicates and recovery transitions only. It does not import email, call Alexa+, SES, Bedrock, a calendar, or a travel provider.
+The current fixture imports and explicitly activates a synthetic manual contract, persists two versions in temporary JSON, and reopens them through a new repository instance. It also exercises deterministic policy and recovery rules. It does not import email, start a monitoring worker, call Alexa+, SES, Bedrock, a calendar, or a travel provider, or provide production durability.
 
 ## Workspace map
 
@@ -32,6 +32,7 @@ The current fixture evaluates contract predicates and recovery transitions only.
 | [`packages/contracts/`](./packages/contracts/) | Typed schema loading and byte-identical schema copy |
 | [`packages/policy-engine/`](./packages/policy-engine/) | Deterministic units, predicates, evidence freshness, and aggregation |
 | [`packages/domain/`](./packages/domain/) | Recovery-state and replacement-confirmation rules |
+| [`services/importer/`](./services/importer/) | Traveler-scoped manual drafts, explicit activation, and fixture-only version repositories |
 | [`content/feature-registry/`](./content/feature-registry/) | Draft feature definitions; not provider verification |
 | [`scripts/walking-skeleton.ts`](./scripts/walking-skeleton.ts) | Offline fixture path |
 | [`tests/`](./tests/) | Unit, canonical-contract, and policy-boundary tests |

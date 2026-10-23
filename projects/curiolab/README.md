@@ -1,7 +1,7 @@
 # CurioLab
 
 **Track:** Fire TV
-**Status:** initial episode-domain and content-compiler foundation validated locally; Fire OS/companion applications not implemented
+**Status:** manual two-trial episode slice and content-compiler foundation validated locally; Fire OS/companion applications not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
 CurioLab is a two-screen family science episode in which predictions precede results and confirmed measurements—not canned success values—drive comparisons.
@@ -29,7 +29,7 @@ Draft validation checks schema/graph semantics only. `--publish` intentionally r
 | --- | --- |
 | [`SPEC.md`](./SPEC.md) | Canonical requirements and vertical slices |
 | [`schemas/episode.schema.json`](./schemas/episode.schema.json) | Canonical episode contract |
-| [`packages/episode-engine/`](./packages/episode-engine/) | Immutable prediction, measurement, comparison, and resume domain state |
+| [`packages/episode-engine/`](./packages/episode-engine/) | Predictions, adult stop/confirmation/correction, measured comparisons, reflection, and in-memory snapshots |
 | [`packages/content-compiler/`](./packages/content-compiler/) | Draft schema/graph and publication-preflight checks |
 | [`content/episodes/bridge-to-moon-base/`](./content/episodes/bridge-to-moon-base/) | Draft content copy and pending human reviews |
 | [`scripts/validate-content.ts`](./scripts/validate-content.ts) | Explicit draft/publication-preflight CLI |

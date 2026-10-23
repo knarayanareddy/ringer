@@ -1,6 +1,6 @@
 # AccessHold — Specification Traceability
 
-**Status:** initial local foundation validated; most requirements remain incomplete
+**Status:** local manual-contract slice validated; most requirements remain incomplete
 **Coverage:** 56 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -21,10 +21,10 @@ Use paths relative to this project root for implementation, tests, and evidence.
 
 | ID | Requirement or scenario summary | Status | Implementation paths | Test paths | Demo/device evidence |
 | --- | --- | --- | --- | --- | --- |
-| `FR-AH-001` | Import a booking from a traveler-authorized confirmation email or manual structured entry. | `not_started` | — | — | — |
-| `FR-AH-002` | Extract trip/assets into a reviewable draft; no monitoring begins before traveler approval. | `not_started` | — | — | — |
-| `FR-AH-003` | Capture hard constraints and preferences with traveler wording, deterministic predicates, and applicable assets. | `not_started` | — | — | — |
-| `FR-AH-004` | Validate and persist an Access Contract using the canonical schema. | `in_progress` | `packages/contracts` | `tests/contract` | — |
+| `FR-AH-001` | Import a booking from a traveler-authorized confirmation email or manual structured entry. | `implemented` | `services/importer/src/manual-contract-service.ts` | `tests/unit/manual-contract-service.test.ts` | — |
+| `FR-AH-002` | Extract trip/assets into a reviewable draft; no monitoring begins before traveler approval. | `implemented` | `services/importer/src/manual-contract-service.ts` | `tests/unit/manual-contract-service.test.ts` | — |
+| `FR-AH-003` | Capture hard constraints and preferences with traveler wording, deterministic predicates, and applicable assets. | `in_progress` | `services/importer/src/manual-contract-service.ts` | `tests/unit/manual-contract-service.test.ts` | — |
+| `FR-AH-004` | Validate and persist an Access Contract using the canonical schema. | `implemented` | `packages/contracts`<br>`services/importer/src` | `tests/contract`<br>`tests/unit/manual-contract-service.test.ts` | — |
 | `FR-AH-005` | Attach source-specific, timestamped evidence to exact assets; expired evidence becomes stale/unverified. | `not_started` | — | — | — |
 | `FR-AH-006` | Draft provider verification questions and send them only after approval. | `not_started` | — | — | — |
 | `FR-AH-007` | Monitor authorized email and configured provider feeds for changes, deduplicate them, and version affected assets. | `not_started` | — | — | — |
@@ -35,7 +35,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-AH-012` | Mark recovery complete only after importing a replacement confirmation and revalidating the contract. | `in_progress` | `packages/domain` | `tests/unit` | — |
 | `FR-AH-013` | Provide Alexa+ tools and rich cards for status, evidence, changes, recovery options, approval, and handoff. | `not_started` | — | — | — |
 | `FR-AH-014` | Provide a human-handoff packet containing the itinerary, constraints, evidence, attempted actions, and unknowns. | `not_started` | — | — | — |
-| `FR-AH-015` | Support contract/trip export, correction, revocation, and deletion. | `not_started` | — | — | — |
+| `FR-AH-015` | Support contract/trip export, correction, revocation, and deletion. | `in_progress` | `services/importer/src/manual-contract-service.ts` | `tests/unit/manual-contract-service.test.ts` | — |
 | `FR-AH-016` | Update calendar events only from confirmed itinerary versions. | `not_started` | — | — | — |
 | `INT-AH-001` | A real Alexa+ Agent Skill or self-hosted MCP server using MCP specification 2025-11-25 or later and Streamable HTTP MUST run in the main flow. | `not_started` | — | — | — |
 | `INT-AH-002` | The required Alexa+ simulator or working simulated Alexa+ web experience MUST exercise the actual MCP/Skill backend in demo evidence. | `not_started` | — | — | — |
@@ -47,7 +47,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `NFR-AH-002` | A provider/status event begins constraint evaluation within 60 seconds of ingestion under normal load. | `not_started` | — | — | — |
 | `NFR-AH-003` | Alexa+ status responses return initial voice-safe content within 2.5 seconds; longer work continues with a task ID. | `not_started` | — | — | — |
 | `NFR-AH-004` | No duplicate provider request, calendar update, or booking action under at-least-once delivery and client retries. | `not_started` | — | — | — |
-| `NFR-AH-005` | A process restart loses no approved workflow state or evidence. | `not_started` | — | — | — |
+| `NFR-AH-005` | A process restart loses no approved workflow state or evidence. | `in_progress` | `services/importer/src/contract-repository.ts` | `tests/unit/manual-contract-service.test.ts` | — |
 | `NFR-AH-006` | All hard-constraint evaluations are reproducible from contract version, evidence versions, and policy version. | `not_started` | — | — | — |
 | `SEC-AH-001` | Access needs are sensitive data; no advertising, public profile, or model-training use by default. | `not_started` | — | — | — |
 | `SEC-AH-002` | Raw confirmation/email retention defaults to 30 days; derived contracts persist until trip deletion or 30 days after trip end, then are deleted unless the traveler extends retention. | `not_started` | — | — | — |
@@ -57,7 +57,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `SEC-AH-006` | Advocates have revocable least-privilege roles; revocation invalidates sessions and signed links. | `not_started` | — | — | — |
 | `SEC-AH-007` | Delete raw media, derived evidence, exports, MCP viewer tokens, and cached prompts under the deletion workflow. | `not_started` | — | — | — |
 | `SEC-AH-008` | Rights disputes, emergencies, medical needs, and ambiguous provider responses route to a human without automated assertions. | `not_started` | — | — | — |
-| `AC-AH-001` | Given an unreviewed import, when monitoring starts prematurely, then activation is rejected. | `not_started` | — | — | — |
+| `AC-AH-001` | Given an unreviewed import, when monitoring starts prematurely, then activation is rejected. | `implemented` | `services/importer/src/manual-contract-service.ts` | `tests/unit/manual-contract-service.test.ts`<br>`docs/validation.md` | — |
 | `AC-AH-002` | Given ambiguous dates/time zones, when extraction completes, then the fields require correction rather than guessing. | `not_started` | — | — | — |
 | `AC-AH-003` | Given a valid contract, when serialized, then it passes the canonical schema and round-trips without semantic changes. | `verified` | `packages/contracts` | `tests/contract`<br>`docs/validation.md` | — |
 | `AC-AH-004` | Given a numeric requirement and different units, when evaluated, then normalization produces the expected result. | `verified` | `packages/policy-engine` | `tests/unit`<br>`docs/validation.md` | — |

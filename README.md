@@ -2,17 +2,17 @@
 
 Five independent hackathon project workspaces, each with its own specification, design pack, lockfile, deterministic foundation, tests, and evidence boundaries.
 
-## Initial implementation foundations
+## Local implementation slices
 
-| Project | Track | Current local foundation | Verified local checks |
+| Project | Track | Current local implementation | Verified local checks |
 | --- | --- | --- | --- |
-| [AccessHold](./projects/accesshold/) | Alexa+ | Contract predicates, evidence freshness, recovery transitions | 20 tests; lint/types/build/audit/fixture |
-| [CurioLab](./projects/curiolab/) | Fire TV | Kotlin episode state and TypeScript content preflight | 19 tests; lint/types/build/audit/fixture |
-| [NextTime](./projects/nexttime/) | Bee | Consent, minimization, authentic rubric, skill state | 29 tests; 98.53% branch-aware coverage; build/audit/fixture |
-| [HarvestGrid](./projects/harvestgrid/) | Ring | Forecast semantics and deterministic coordinator matching | 23 tests; 98.17% branch-aware coverage; build/audit/fixture |
-| [RoomSmith](./projects/roomsmith/) | Fire TV | Kotlin puzzle engine and TypeScript graph/fallback preflight | 24 tests; lint/types/build/audit/fixture |
+| [AccessHold](./projects/accesshold/) | Alexa+ | Manual draft correction/activation, fixture version persistence, policy and recovery rules | 25 tests; lint/types/build/audit/fixture |
+| [CurioLab](./projects/curiolab/) | Fire TV | Manual stop/confirm/correct episode flow, measured comparisons, content preflight | 24 tests; lint/types/build/audit/fixture |
+| [NextTime](./projects/nexttime/) | Bee | Consent-aware learner-only transcript minimization, rubric, and skill state | 37 tests; 96.93% branch-aware coverage; build/audit/fixture |
+| [HarvestGrid](./projects/harvestgrid/) | Ring | Forecast semantics, deterministic matching, approval-gated assignments and bounded location access | 31 tests; 95.32% branch-aware coverage; build/audit/fixture |
+| [RoomSmith](./projects/roomsmith/) | Fire TV | Ordered remote episodes, physical/remote puzzle rules, hints, and metadata-only case reports | 29 tests; lint/types/build/audit/fixture |
 
-**These are initial walking-skeleton/domain foundations, not five completed applications.** No live sponsor integration, real observation, device demo, user study, operational model, deployment, or release approval is claimed. External credentials, devices, datasets, partnerships, human approvals, and unavailable native toolchains remain explicit blockers in each project's `docs/preflight.md`.
+**These are independent domain/fixture slices, not five completed applications.** The aggregate local suite contains 146 tests. No live sponsor integration, real observation, device demo, user study, operational model, deployment, or release approval is claimed. External credentials, devices, datasets, partnerships, human approvals, and unavailable native toolchains remain explicit blockers in each project's `docs/preflight.md`.
 
 ### Run locally
 

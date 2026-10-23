@@ -59,6 +59,39 @@ object PuzzleEngineTestSuite {
         candidatePresent = present
     )
 
+    private fun remotePuzzles() = listOf(
+        RemotePuzzle(
+            "lighthouse_alignment",
+            RemoteInteraction.SINGLE_CHOICE,
+            listOf("option_red_left"),
+            authoredHints = listOf("Compare the labeled lens and book positions.")
+        ),
+        RemotePuzzle(
+            "raise_the_shield",
+            RemoteInteraction.HOLD,
+            listOf("option_shield"),
+            holdMs = 750,
+            authoredHints = listOf("Use the large shield control; no camera is needed.")
+        ),
+        RemotePuzzle(
+            "lens_archive_sequence",
+            RemoteInteraction.ORDERED_ACTIONS,
+            listOf("option_lens_then_archive")
+        )
+    )
+
+    private fun remoteSession(
+        noTiming: Boolean = false,
+        snapshot: RemoteEpisodeSnapshot = RemoteEpisodeSnapshot()
+    ) = RemoteEpisodeSession(
+        sessionId = "fixture-session",
+        episodeId = "fixture-lighthouse",
+        contentVersion = "0.1.0",
+        puzzles = remotePuzzles(),
+        noTimingMode = noTiming,
+        initialSnapshot = snapshot
+    )
+
     private fun expect(name: String, block: () -> Unit) {
         block()
         passed += 1
@@ -169,6 +202,95 @@ object PuzzleEngineTestSuite {
             val resumed = PuzzleEngine("fixture-session", "mat-v1", "kit-v1", initialState = EngineState(1, mapOf(completion.puzzleId to completion)))
             check(resumed.commitRemote("lighthouse_alignment", listOf("option_red_left"), listOf("option_red_left"), 1).isEmpty())
             check(resumed.caseReport() == listOf(completion))
+        }
+        expect("remote episode enforces authored order and answers") {
+            val session = remoteSession()
+            check(runCatching {
+                session.submitRemote("lens_archive_sequence", listOf("option_lens_then_archive"), 0, 0)
+            }.isFailure)
+            check(session.submitRemote("lighthouse_alignment", listOf("option_red_right"), 0, 0).isEmpty())
+            check(session.snapshot.engineState.stateSequence == 0L)
+            check(session.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 1).size == 1)
+
+            val ordered = RemoteEpisodeSession(
+                "fixture-session",
+                "fixture-lighthouse",
+                "0.1.0",
+                listOf(
+                    RemotePuzzle(
+                        "ordered",
+                        RemoteInteraction.ORDERED_ACTIONS,
+                        listOf("lens", "archive")
+                    )
+                )
+            )
+            check(ordered.submitRemote("ordered", listOf("archive", "lens"), 0, 0).isEmpty())
+            check(ordered.snapshot.engineState.stateSequence == 0L)
+            check(ordered.submitRemote("ordered", listOf("lens", "archive"), 0, 1).size == 1)
+        }
+        expect("remote hold respects duration and no-timing selection") {
+            val standard = remoteSession()
+            standard.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 0)
+            check(standard.submitRemote("raise_the_shield", listOf("option_shield"), 1, 100).isEmpty())
+            check(standard.submitRemote("raise_the_shield", listOf("option_shield"), 1, 500).isEmpty())
+            check(standard.submitRemote("raise_the_shield", listOf("option_shield"), 1, 850).size == 1)
+
+            val noTiming = remoteSession(noTiming = true)
+            noTiming.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 0)
+            check(noTiming.submitRemote("raise_the_shield", listOf("option_shield"), 1, 0).size == 1)
+        }
+        expect("remote snapshot resumes hints and media-free case metadata") {
+            val session = remoteSession(noTiming = true)
+            session.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 0)
+            val hint = session.authoredHint("raise_the_shield", 1, 1)
+            check(session.authoredHint("raise_the_shield", 1, 1) == hint)
+            check(session.snapshot.hintsUsed["raise_the_shield"] == 1)
+            check(session.snapshot.engineState.stateSequence == 1L)
+
+            val resumed = remoteSession(noTiming = true, snapshot = session.snapshot)
+            resumed.submitRemote("raise_the_shield", listOf("option_shield"), 1, 10)
+            resumed.recordActiveTime(1200)
+            resumed.submitRemote("lens_archive_sequence", listOf("option_lens_then_archive"), 2, 20)
+            val report = resumed.caseReport()
+            check(report.completedPuzzles.size == 3)
+            check(report.completedPuzzles.all { it.path == CompletionPath.REMOTE && it.observationSequence == null })
+            check(report.hintsUsed == mapOf("raise_the_shield" to 1))
+            check(report.elapsedActiveTimeMs == 1200L)
+        }
+        expect("remote stale commits fail and completed duplicates are ignored") {
+            val session = remoteSession()
+            check(runCatching {
+                session.submitRemote("lighthouse_alignment", listOf("option_red_left"), 1, 0)
+            }.isFailure)
+            session.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 0)
+            val committed = session.snapshot
+            check(session.submitRemote("lighthouse_alignment", listOf("option_red_left"), 0, 1).isEmpty())
+            check(session.snapshot == committed)
+        }
+        expect("remote report and authored definitions fail closed") {
+            val session = remoteSession()
+            check(runCatching { session.caseReport() }.isFailure)
+            check(runCatching { session.recordActiveTime(-1) }.isFailure)
+            check(runCatching { session.authoredHint("raise_the_shield", 1, 0) }.isFailure)
+            check(runCatching {
+                RemoteEpisodeSession(
+                    "fixture-session",
+                    "fixture-lighthouse",
+                    "0.1.0",
+                    listOf(remotePuzzles()[0], remotePuzzles()[0])
+                )
+            }.isFailure)
+            check(runCatching {
+                remoteSession(snapshot = RemoteEpisodeSnapshot(hintsUsed = mapOf("raise_the_shield" to 2)))
+            }.isFailure)
+            val unknown = CompletedPuzzle("unknown", CompletionPath.REMOTE, 1)
+            check(runCatching {
+                remoteSession(
+                    snapshot = RemoteEpisodeSnapshot(
+                        EngineState(1, mapOf(unknown.puzzleId to unknown))
+                    )
+                )
+            }.isFailure)
         }
         println("PASS $passed Kotlin puzzle-engine tests")
     }

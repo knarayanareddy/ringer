@@ -1,7 +1,7 @@
 # HarvestGrid
 
 **Track:** Ring
-**Status:** initial forecast-contract and coordinator-matching foundation validated locally; Ring/media/forecast operations not implemented
+**Status:** forecast-contract, deterministic matching, and in-memory glean-workflow slices validated locally; Ring/media/live operations not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
 HarvestGrid is intended to support privacy-preserving, coordinator-reviewed backyard harvest logistics. Visual estimates cannot establish internal ripeness or food safety.
@@ -28,7 +28,7 @@ Ring, media processing, operational forecasts, persistence, notifications, infra
 | --- | --- |
 | [`SPEC.md`](./SPEC.md) | Canonical requirements and vertical slices |
 | [`schemas/harvest-window.schema.json`](./schemas/harvest-window.schema.json) | Canonical forecast contract |
-| [`packages/domain/harvestgrid_domain/`](./packages/domain/harvestgrid_domain/) | Forecast semantic checks and fixture walking path |
+| [`packages/domain/harvestgrid_domain/`](./packages/domain/harvestgrid_domain/) | Forecast checks, approval-gated assignments, bounded location access, cancellation, and fixture walking path |
 | [`packages/matching/harvestgrid_domain_matching/`](./packages/matching/harvestgrid_domain_matching/) | Hard eligibility filters, scoring, and deterministic ties |
 | [`packages/contracts/`](./packages/contracts/) | Byte-identical schema copy used by contract tests |
 | [`content/cultivars/`](./content/cultivars/) | Placeholder boundary; no cultivar priors supplied |
@@ -38,6 +38,6 @@ Ring, media processing, operational forecasts, persistence, notifications, infra
 
 ## External blockers
 
-A documented Ring integration and real capabilities, residential-media consent, weather/CV services, licensed datasets and cultivar priors, model artifacts/evaluation, coordinator/participant reviews, and release evidence remain blocked or unimplemented. The fixture is experimental, seasonal-baseline-only, and human-review-required; it is not an operational forecast or assignment.
+A documented Ring integration and real capabilities, residential-media consent, weather/CV services, licensed datasets and cultivar priors, model artifacts/evaluation, coordinator/participant reviews, and release evidence remain blocked or unimplemented. The forecast fixture is experimental, seasonal-baseline-only, and human-review-required. The operations fixture creates no real invitation, residential disclosure, durable workflow, or completed glean.
 
 Maintain [`SPEC_TRACEABILITY.md`](./SPEC_TRACEABILITY.md) and [`SPEC_DEVIATIONS.md`](./SPEC_DEVIATIONS.md). Never place residential media, private datasets, or model binaries in Git.

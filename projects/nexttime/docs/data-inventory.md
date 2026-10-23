@@ -7,6 +7,7 @@ Inventory date: 2026-10-23. No authentic learner or Bee data is present.
 | Fictional minimized attempt | `examples/real-world-attempt.example.json` | Synthetic self-evidence/outcome fixture | Source-controlled schema/privacy tests only |
 | Situation rubric | `packages/rubrics/rubric_v1.json` | Draft authored rules; educator review not evidenced | Deterministic fixture evaluation only |
 | Skill state | Python domain models in tests | Synthetic alpha/beta/count values | In-memory only; no learner profile stored |
+| Source/minimized transcripts | `packages/domain/nexttime_domain/transcripts.py`, `tests/unit/test_transcripts.py` | Synthetic learner, other-speaker, and self-memo turns | Process lifetime only; minimized results exclude other/ambiguous turns; deletion deadline is metadata, not a deletion receipt |
 | Schema copy | `packages/contracts/` | Non-sensitive attempt contract | Byte-drift and round-trip tests |
 | Configuration examples | `.env.example` | Safe placeholders, no Bee/AWS secrets | Real environment files are Git-ignored |
 
