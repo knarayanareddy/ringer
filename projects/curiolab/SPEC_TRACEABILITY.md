@@ -1,6 +1,6 @@
 # CurioLab — Specification Traceability
 
-**Status:** local manual-episode, structured-perception, and atomic fixture-snapshot slices validated; most requirements remain incomplete
+**Status:** local manual-episode, structured-perception, scoped-pairing, and atomic fixture-snapshot slices validated; most requirements remain incomplete
 **Coverage:** 56 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -23,7 +23,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | --- | --- | --- | --- | --- | --- |
 | `FR-CL-001` | Download, verify, cache, and launch a signed/versioned episode bundle on Fire OS. | `not_started` | — | — | — |
 | `FR-CL-002` | Present adult consent, safety, privacy, accessibility, and camera choices before the first lab. | `in_progress` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test` | — |
-| `FR-CL-003` | Pair one companion to a TV session using a short-lived code and scoped credentials. | `not_started` | — | — | — |
+| `FR-CL-003` | Pair one companion to a TV session using a short-lived code and scoped credentials. | `implemented` | `services/pairing/src/fixture-pairing-service.ts` | `tests/unit/pairing.test.ts`<br>`docs/validation.md` | — |
 | `FR-CL-004` | Record a prediction before displaying the corresponding experimental result. | `implemented` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `FR-CL-005` | Guide the exact paper-bridge protocol and verify calibration before camera-assisted counting. | `in_progress` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |
 | `FR-CL-006` | Produce a stable observed coin count with confidence and occlusion/error states on the companion. | `in_progress` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |
@@ -52,14 +52,14 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `SEC-CL-001` | No child account, name, precise location, advertising ID, or behavioral advertising profile. | `not_started` | — | — | — |
 | `SEC-CL-002` | Raw frames remain in companion memory; cloud message tests reject image/audio fields. | `in_progress` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts` | — |
 | `SEC-CL-003` | Voice requires push-to-talk and visible state; no wake-word or background microphone service. | `not_started` | — | — | — |
-| `SEC-CL-004` | Pairing tokens are scoped to one session/device and revoked on completion, adult action, or 12-hour expiry. | `not_started` | — | — | — |
+| `SEC-CL-004` | Pairing tokens are scoped to one session/device and revoked on completion, adult action, or 12-hour expiry. | `implemented` | `services/pairing/src/fixture-pairing-service.ts` | `tests/unit/pairing.test.ts`<br>`docs/validation.md` | — |
 | `SEC-CL-005` | Anonymous session snapshots delete after 7 days; deletion request covers snapshots, hints, and transient voice records. | `not_started` | — | — | — |
 | `SEC-CL-006` | Content bundles are signed and hash-verified; unapproved content cannot execute. | `in_progress` | `packages/content-compiler` | `tests/security` | — |
 | `SEC-CL-007` | Live model text is sanitized, length-bounded, and never rendered as HTML or spoken without schema validation. | `not_started` | — | — | — |
 | `SEC-CL-008` | Adult consent is required for analytics separately from episode use; core play works with analytics off. | `not_started` | — | — | — |
 | `AC-CL-001` | Given an unsigned/modified bundle, when launching, then content is rejected and prior signed version remains usable. | `not_started` | — | — | — |
-| `AC-CL-002` | Given an expired pairing code, when exchanged, then pairing fails without creating credentials. | `not_started` | — | — | — |
-| `AC-CL-003` | Given a second companion using an already consumed code, when pairing, then it is denied. | `not_started` | — | — | — |
+| `AC-CL-002` | Given an expired pairing code, when exchanged, then pairing fails without creating credentials. | `implemented` | `services/pairing/src/fixture-pairing-service.ts` | `tests/unit/pairing.test.ts`<br>`docs/validation.md` | — |
+| `AC-CL-003` | Given a second companion using an already consumed code, when pairing, then it is denied. | `implemented` | `services/pairing/src/fixture-pairing-service.ts` | `tests/unit/pairing.test.ts`<br>`docs/validation.md` | — |
 | `AC-CL-004` | Given no prediction, when the lab result is requested, then the engine remains at prediction. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-CL-005` | Given missing/misaligned mat markers, when counting, then calibration blocks stable observations. | `implemented` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |
 | `AC-CL-006` | Given a stationary valid coin for less than 500 ms, when frames arrive, then it is not added to the stable count. | `implemented` | `packages/perception/src/index.ts` | `tests/unit/perception.test.ts`<br>`docs/validation.md` | — |

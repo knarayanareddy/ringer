@@ -1,4 +1,5 @@
 import { ObservationIngress } from "../packages/session-contracts/src/index.js";
+import { FixtureDirectorService } from "../services/director/src/fixture-director-service.js";
 
 const context = {
   sessionId: "session-walking-fixture",
@@ -75,6 +76,47 @@ const forged = ingress.accept(
     payload: { puzzle_id: context.puzzleId },
   }),
 );
+const director = new FixtureDirectorService(
+  {
+    lighthouse_alignment: [
+      "Check the lens label, then compare its position with the book.",
+    ],
+  },
+  {
+    gateway: () => ({
+      text: "malformed",
+      hint_level: 1,
+      target_role: "observer",
+      uses_fallback: false,
+    }),
+  },
+);
+const directed = await director.requestHint({
+  episode_version: "1.0.0",
+  puzzle_id: "lighthouse_alignment",
+  attempt_count: 1,
+  hint_level: 1,
+  last_error: "color_unknown",
+  transport: "webrtc",
+  accessibility_mode: "standard",
+});
+let directorMediaRejected = false;
+try {
+  await director.requestHint({
+    episode_version: "1.0.0",
+    puzzle_id: "lighthouse_alignment",
+    attempt_count: 1,
+    hint_level: 1,
+    last_error: "color_unknown",
+    transport: "webrtc",
+    accessibility_mode: "standard",
+    frame: "forbidden-raw-media",
+  });
+} catch (error) {
+  directorMediaRejected =
+    error instanceof Error &&
+    error.message === "director_context_field_rejected";
+}
 
 console.log(
   JSON.stringify(
@@ -89,10 +131,15 @@ console.log(
       remote_fallback_available: invalid.fallback_available,
       forged_completion_disposition: forged.disposition,
       forged_security_event: forged.security_event,
+      director_hint_source: directed.source,
+      director_fallback_reason: directed.fallback_reason,
+      director_hint_uses_fallback: directed.hint.uses_fallback,
+      director_state_mutated: directed.state_mutated,
+      director_media_context_rejected: directorMediaRejected,
       tv_puzzle_committed: false,
       raw_media_accepted: false,
       notice:
-        "Synthetic companion messages only; the authoritative Kotlin PuzzleEngine must still verify hold and commit any puzzle completion.",
+        "Synthetic companion messages and an injected fixture director only; the authoritative Kotlin PuzzleEngine must still verify hold and commit any puzzle completion. No Bedrock, Polly, WebRTC, or backend connection is claimed.",
     },
     null,
     2,

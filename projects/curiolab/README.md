@@ -1,7 +1,7 @@
 # CurioLab
 
 **Track:** Fire TV
-**Status:** manual two-trial episode, structured-perception, and content-compiler foundations validated locally; Fire OS/companion applications not implemented
+**Status:** manual two-trial episode, structured perception, one-time scoped pairing, and content-compiler foundations validated locally; Fire OS/companion applications not implemented
 **Agent entry point:** [`AGENTS.md`](./AGENTS.md)
 
 CurioLab is a two-screen family science episode in which predictions precede results and confirmed measurements—not canned success values—drive comparisons.
@@ -23,6 +23,8 @@ Draft validation checks schema/graph semantics only. `--publish` intentionally r
 
 `make test-security` audits the npm graph. Native integration, E2E, infrastructure, and deployment targets intentionally fail while unavailable.
 
+The walking fixture also creates an anonymous parent-approved session, exchanges a five-minute unambiguous code once for session/device-scoped credentials, verifies scope binding, denies replay, and revokes access. Pairing state and hashed credential material are in-memory; no REST/WebSocket relay, Cognito, DynamoDB, or companion connection exists.
+
 ## Workspace map
 
 | Path | Purpose |
@@ -32,7 +34,8 @@ Draft validation checks schema/graph semantics only. `--publish` intentionally r
 | [`packages/episode-engine/`](./packages/episode-engine/) | Predictions, adult stop/confirmation/correction, measured comparisons, reflection, and atomic fixture-file snapshots |
 | [`packages/content-compiler/`](./packages/content-compiler/) | Draft schema/graph and publication-preflight checks |
 | [`packages/perception/`](./packages/perception/) | Calibration gates and structured 500 ms stable-count observations; no camera implementation |
-| [`scripts/walking-perception.ts`](./scripts/walking-perception.ts) | Labeled synthetic perception walking fixture |
+| [`services/pairing/`](./services/pairing/) | One-time codes, scoped credential lifecycle, rate limits, expiry, and revocation; no relay |
+| [`scripts/walking-perception.ts`](./scripts/walking-perception.ts) | Labeled synthetic perception and pairing walking fixtures |
 | [`content/episodes/bridge-to-moon-base/`](./content/episodes/bridge-to-moon-base/) | Draft content copy and pending human reviews |
 | [`scripts/validate-content.ts`](./scripts/validate-content.ts) | Explicit draft/publication-preflight CLI |
 | [`tests/`](./tests/) | TypeScript and Kotlin unit/contract/security checks |

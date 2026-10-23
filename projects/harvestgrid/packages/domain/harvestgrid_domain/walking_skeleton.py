@@ -17,6 +17,7 @@ from .outcomes import (
     WeightRecord,
     WeightSource,
 )
+from .privacy import ArtifactKind, FixturePrivacyService
 
 ROOT = Path(__file__).resolve().parents[3]
 T0 = datetime(2026, 10, 23, 12, 0, tzinfo=UTC)
@@ -83,7 +84,54 @@ def main() -> None:
     restricted = RestrictedLocation(
         "FIXTURE ONLY — not a residential address", "Fixture access note"
     )
-    workflow.reveal_location(actor_id=selected, location=restricted, at=reveal_start)
+    privacy = FixturePrivacyService(clock=lambda: T0)
+    privacy.register_organization("org-fixture", ["admin-fixture"])
+    privacy.register_tree(
+        tree_id="tree-fixture",
+        owner_id="owner-fixture",
+        organization_id="org-fixture",
+        cultivar="Prunus domestica",
+        coarse_location="fixture-coarse-area",
+        camera_ids=["camera-fixture"],
+        restricted_location=restricted,
+    )
+    for index, kind in enumerate(
+        (
+            ArtifactKind.RAW_MEDIA,
+            ArtifactKind.DERIVED_FEATURE,
+            ArtifactKind.FORECAST,
+            ArtifactKind.ACCESS_NOTES,
+            ArtifactKind.ANALYTICS_IDENTIFIER,
+        )
+    ):
+        privacy.add_artifact(
+            tree_id="tree-fixture",
+            artifact_id=f"fixture-artifact-{index}",
+            kind=kind,
+            delete_after=T0 + timedelta(days=1),
+            camera_id="camera-fixture" if kind is ArtifactKind.RAW_MEDIA else None,
+        )
+    privacy.bind_glean(
+        tree_id="tree-fixture",
+        glean_id="glean-fixture",
+        coordinator_id="coordinator-fixture",
+    )
+    access = privacy.reveal_location(
+        workflow=workflow,
+        location=restricted,
+        actor_id=selected,
+        at=reveal_start,
+    )
+    privacy.validate_location_access(
+        access_token=access.access_token,
+        actor_id=selected,
+        at=reveal_start,
+    )
+    minimized_export = privacy.export_tree(
+        tree_id="tree-fixture",
+        actor_id="owner-fixture",
+        recent_authentication=True,
+    )
     outcome_workflow = GleanWorkflow(deepcopy(workflow.snapshot))
     cancelled = workflow.cancel(
         actor_id="owner-fixture",
@@ -101,6 +149,28 @@ def main() -> None:
         reveal_after_cancellation = False
     else:
         raise AssertionError("Cancelled workflow must not reveal a restricted location")
+    privacy.revoke_glean_access(glean_id="glean-fixture", actor_id="owner-fixture")
+    try:
+        privacy.validate_location_access(
+            access_token=access.access_token,
+            actor_id=selected,
+            at=T0 + timedelta(minutes=20),
+        )
+    except PermissionError:
+        privacy_access_after_cancellation = False
+    else:
+        raise AssertionError("Cancelled privacy grant must not reveal a restricted location")
+    revocation = privacy.revoke_consent(
+        tree_id="tree-fixture",
+        actor_id="owner-fixture",
+        expected_version=0,
+    )
+    for index in range(5):
+        privacy.advance_deletion(
+            job_id=revocation.deletion_job.job_id,
+            at=T0 + timedelta(minutes=30 + index),
+        )
+    deletion = privacy.deletion_job(revocation.deletion_job.job_id)
 
     entry = CompletionEntry(
         recipient_id="recipient-fixture",
@@ -198,6 +268,18 @@ def main() -> None:
                 "assignment_count": len(cancelled.assignments),
                 "location_reveal_before_cancellation": True,
                 "location_reveal_after_cancellation": reveal_after_cancellation,
+                "privacy_access_after_cancellation": privacy_access_after_cancellation,
+                "privacy_export_minimized": (
+                    minimized_export["raw_media_included"] is False
+                    and minimized_export["exact_address_included"] is False
+                    and minimized_export["access_notes_included"] is False
+                ),
+                "privacy_deletion_status": deletion.status,
+                "privacy_deletion_receipt_count": len(deletion.receipts),
+                "privacy_raw_artifact_remaining": privacy.artifact_present(
+                    "tree-fixture", "fixture-artifact-0"
+                ),
+                "privacy_tree_deleted": privacy.tree_snapshot("tree-fixture").deleted,
                 "notification_adapter_connected": False,
                 "durable_workflow_claimed": False,
                 "outcome_workflow_state": closed.state.value,
@@ -216,10 +298,11 @@ def main() -> None:
                 ),
                 "model_data_gate_reasons": data_gate.reason_codes,
                 "notice": (
-                    "Separate in-memory revocation, coordinator-verified outcomes, and synthetic "
-                    "evaluation aggregation only; no actual invitation, residential location, "
-                    "glean, donation, human manifest review, held-out model evaluation, deletion "
-                    "job, model promotion, or operational outcome is claimed."
+                    "Separate in-memory revocation, minimized export, fixture deletion receipts, "
+                    "coordinator-verified outcomes, and synthetic evaluation aggregation only; "
+                    "no actual invitation, residential location, glean, donation, human manifest "
+                    "review, held-out model evaluation, production deletion job, model promotion, "
+                    "or operational outcome is claimed."
                 ),
             },
             indent=2,
