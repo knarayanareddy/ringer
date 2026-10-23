@@ -1,6 +1,6 @@
 # CurioLab — Specification Traceability
 
-**Status:** local manual-episode slice validated; most requirements remain incomplete
+**Status:** local manual-episode and atomic fixture-snapshot slices validated; most requirements remain incomplete
 **Coverage:** 56 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -70,7 +70,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-CL-011` | Given flat=4 and folded=4, when comparing, then equal branch renders. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-CL-012` | Given flat=6 and folded=2, when comparing, then lower branch renders without assuming a universal outcome. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-CL-013` | Given duplicate confirmation messages, when processed, then one state transition occurs. | `verified` | `packages/episode-engine` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
-| `AC-CL-014` | Given process death after confirmation, when reopened, then the last committed node/value resumes. | `in_progress` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt` | `packages/episode-engine/src/test` | — |
+| `AC-CL-014` | Given process death after confirmation, when reopened, then the last committed node/value resumes. | `in_progress` | `packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeSession.kt`<br>`packages/episode-engine/src/main/kotlin/com/curiolab/episode/ManualEpisodeFileStore.kt` | `packages/episode-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-CL-015` | Given Bedrock timeout/malformed output, when hint requested, then the authored hint appears within budget. | `not_started` | — | — | — |
 | `AC-CL-016` | Given ambiguous voice, when transcribed, then no prediction is selected and remote options remain. | `not_started` | — | — | — |
 | `AC-CL-017` | Given reduced-motion/no-timing settings, when playing, then all content remains completable and understandable. | `not_started` | — | — | — |

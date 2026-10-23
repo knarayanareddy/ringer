@@ -27,7 +27,7 @@ Draft content validation checks graph and fallback semantics only. `--publish` r
 | --- | --- |
 | [`SPEC.md`](./SPEC.md) | Canonical requirements and vertical slices |
 | [`schemas/puzzle-graph.schema.json`](./schemas/puzzle-graph.schema.json) | Canonical puzzle/content contract |
-| [`packages/puzzle-engine/`](./packages/puzzle-engine/) | Holds, thresholds, ordered remote episodes, stale rejection, hints, snapshots, and metadata-only reports |
+| [`packages/puzzle-engine/`](./packages/puzzle-engine/) | Holds, thresholds, ordered remote episodes, stale rejection, hints, atomic fixture-file snapshots, and metadata-only reports |
 | [`packages/content-compiler/`](./packages/content-compiler/) | Schema/graph/fallback and publication-preflight checks |
 | [`content/episodes/light-the-last-lighthouse/`](./content/episodes/light-the-last-lighthouse/) | Draft content copy and pending reviews |
 | [`scripts/validate-content.ts`](./scripts/validate-content.ts) | Explicit draft/publication-preflight CLI |

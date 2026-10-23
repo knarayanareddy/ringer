@@ -24,6 +24,30 @@ data class EpisodeCaseReport(
     val elapsedActiveTimeMs: Long
 )
 
+internal fun validateRemoteSnapshot(snapshot: RemoteEpisodeSnapshot) {
+    val state = snapshot.engineState
+    require(snapshot.activeTimeMs >= 0) { "Active time cannot be negative" }
+    require(state.stateSequence >= 0) { "Remote state sequence cannot be negative" }
+    require(state.lastObservationSequences.isEmpty() && state.sequenceSteps.isEmpty() && state.sequenceStartedAtMs.isEmpty()) {
+        "Remote snapshots cannot contain camera progress"
+    }
+    require(snapshot.hintsUsed.keys.all { it.isNotBlank() }) { "Hint puzzle IDs cannot be blank" }
+    require(snapshot.hintsUsed.values.all { it >= 0 }) { "Hint levels cannot be negative" }
+    require(state.completedPuzzles.size.toLong() == state.stateSequence) {
+        "Remote state sequence does not match committed completions"
+    }
+    state.completedPuzzles.forEach { (puzzleId, completion) ->
+        require(puzzleId.isNotBlank() && completion.puzzleId == puzzleId) { "Completion puzzle ID is invalid" }
+        require(completion.path == CompletionPath.REMOTE && completion.observationSequence == null) {
+            "Remote snapshots accept only media-free remote completions"
+        }
+    }
+    val orderedSequences = state.completedPuzzles.values.sortedBy { it.committedSequence }.map { it.committedSequence }
+    require(orderedSequences == (1L..state.stateSequence).toList()) {
+        "Remote completion sequences must be unique and contiguous"
+    }
+}
+
 /** Ordered remote-only episode coordinator. Snapshots are values, not a durable store. */
 class RemoteEpisodeSession(
     private val sessionId: String,
@@ -45,6 +69,7 @@ class RemoteEpisodeSession(
     private var activeTimeMs = initialSnapshot.activeTimeMs
 
     init {
+        validateRemoteSnapshot(initialSnapshot)
         require(sessionId.isNotBlank() && episodeId.isNotBlank() && contentVersion.isNotBlank()) {
             "Session and episode identifiers are required"
         }

@@ -22,6 +22,25 @@ data class EpisodeState(
     val measurements: Map<String, Int> = emptyMap(),
     val stateSequence: Long = 0
 ) {
+    init {
+        require(stateSequence >= 0) { "Episode state sequence cannot be negative" }
+        require(predictions.keys.all { it in allowedPredictions }) { "Unknown prediction variable" }
+        predictions.forEach { (variable, option) ->
+            require(option in allowedPredictions.getValue(variable)) { "Prediction option is not authored" }
+        }
+        require(measurements.keys.all { key -> Trial.entries.any { it.measurementKey == key } }) {
+            "Unknown measurement variable"
+        }
+        measurements.forEach { (key, count) ->
+            require(count in 0..100) { "Confirmed count is outside declared bounds" }
+            val trial = Trial.entries.single { it.measurementKey == key }
+            require(trial.predictionKey in predictions) { "Measurement requires its prediction" }
+        }
+        require(stateSequence == (predictions.size + measurements.size).toLong()) {
+            "Episode state sequence does not match committed values"
+        }
+    }
+
     fun commitPrediction(variable: String, option: String, expectedStateSequence: Long): EpisodeState {
         val existing = predictions[variable]
         if (existing != null) {

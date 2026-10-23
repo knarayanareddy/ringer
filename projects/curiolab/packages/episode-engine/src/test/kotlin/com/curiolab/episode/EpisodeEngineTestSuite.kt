@@ -1,5 +1,7 @@
 package com.curiolab.episode
 
+import java.nio.file.Files
+
 object EpisodeEngineTestSuite {
     private var passed = 0
 
@@ -133,6 +135,73 @@ object EpisodeEngineTestSuite {
         }
         expect("manual summary requires the completed reflection") {
             check(runCatching { manualFlatConfirmed().measuredSummary() }.isFailure)
+        }
+        expect("atomic fixture file reopens through a new store and session") {
+            val directory = Files.createTempDirectory("curiolab-episode-test-")
+            val path = directory.resolve("episode.snapshot")
+            try {
+                val store = ManualEpisodeFileStore(path)
+                val session = manualFlatConfirmed()
+                store.save(session.snapshot)
+                val firstBytes = Files.readAllBytes(path)
+                store.save(session.snapshot)
+                check(Files.readAllBytes(path).contentEquals(firstBytes))
+
+                val resumed = ManualEpisodeSession(ManualEpisodeFileStore(path).load())
+                check(resumed.snapshot == session.snapshot)
+                resumed.commitPrediction(Trial.FOLDED, "more", 4)
+                resumed.markStop(Trial.FOLDED, 2, 5)
+                resumed.confirmStoppedMeasurement(Trial.FOLDED, 2, 6)
+                resumed.acknowledgeComparison(7)
+                resumed.commitReflection("shape_can_matter", 8)
+                store.save(resumed.snapshot)
+
+                val completed = ManualEpisodeSession(ManualEpisodeFileStore(path).load())
+                check(completed.snapshot.stage == ManualStage.COMPLETE)
+                check(completed.measuredSummary() == resumed.measuredSummary())
+                check(Files.list(directory).use { it.count() } == 1L)
+            } finally {
+                Files.deleteIfExists(path)
+                Files.deleteIfExists(directory)
+            }
+        }
+        expect("malformed or semantically invalid fixture snapshots fail closed") {
+            val directory = Files.createTempDirectory("curiolab-snapshot-validation-")
+            val path = directory.resolve("episode.snapshot")
+            try {
+                val store = ManualEpisodeFileStore(path)
+                store.save(manualFlatConfirmed().snapshot)
+                val valid = Files.readAllBytes(path)
+                val invalidMagic = valid.copyOf()
+                invalidMagic[0] = 'X'.code.toByte()
+                Files.write(path, invalidMagic)
+                check(runCatching { store.load() }.isFailure)
+
+                Files.write(path, valid.copyOf(valid.size - 1))
+                check(runCatching { store.load() }.isFailure)
+                Files.write(path, valid + 0)
+                check(runCatching { store.load() }.isFailure)
+                val invalidChecksum = valid.copyOf()
+                invalidChecksum[invalidChecksum.lastIndex] =
+                    (invalidChecksum.last().toInt() xor 1).toByte()
+                Files.write(path, invalidChecksum)
+                check(runCatching { store.load() }.isFailure)
+                val unsupportedVersion = valid.copyOf()
+                unsupportedVersion[11] = 2
+                Files.write(path, unsupportedVersion)
+                check(runCatching { store.load() }.isFailure)
+
+                Files.write(path, valid)
+                val invalidState = manualFlatConfirmed().snapshot.copy(
+                    stage = ManualStage.COMPLETE,
+                    reflection = null
+                )
+                check(runCatching { store.save(invalidState) }.isFailure)
+                check(Files.readAllBytes(path).contentEquals(valid))
+            } finally {
+                Files.deleteIfExists(path)
+                Files.deleteIfExists(directory)
+            }
         }
         println("PASS $passed Kotlin episode-engine tests")
     }

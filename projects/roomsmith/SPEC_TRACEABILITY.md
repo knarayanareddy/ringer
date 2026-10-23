@@ -1,6 +1,6 @@
 # RoomSmith — Specification Traceability
 
-**Status:** local ordered-remote-episode slice validated; most requirements remain incomplete
+**Status:** local ordered-remote-episode and atomic fixture-snapshot slices validated; most requirements remain incomplete
 **Coverage:** 57 unique requirement and acceptance IDs from [`SPEC.md`](./SPEC.md)
 **Evidence warning:** linked evidence is local source/fixture evidence only; no live integration, device, user-study, or release evidence is implied.
 
@@ -32,7 +32,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `FR-RS-009` | Provide role-based clues and a complete solo path. | `not_started` | — | — | — |
 | `FR-RS-010` | Provide equivalent remote fallbacks, no-timing mode, non-color labels, captions, and reduced motion. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `FR-RS-011` | Supply authored hints and optional schema-bounded Bedrock director hints with deterministic fallback. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt` | `packages/puzzle-engine/src/test` | — |
-| `FR-RS-012` | Recover from disconnect/process restart using committed state and reject stale observations. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
+| `FR-RS-012` | Recover from disconnect/process restart using committed state and reject stale observations. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt`<br>`packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeFileStore.kt` | `packages/puzzle-engine/src/test`<br>`docs/validation.md` | — |
 | `FR-RS-013` | Generate a final illustrated case report from game state only, not room imagery. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
 | `FR-RS-014` | Publish only schema-valid, solver-verified, asset-verified, human-reviewed puzzle graphs. | `in_progress` | `packages/content-compiler` | `tests/unit`<br>`tests/security` | — |
 | `FR-RS-015` | Delete session artifacts on request and under retention policy. | `not_started` | — | — | — |
@@ -73,7 +73,7 @@ Use paths relative to this project root for implementation, tests, and evidence.
 | `AC-RS-015` | Given any camera puzzle, when remote fallback is selected, then the same story node can complete accessibly. | `in_progress` | `packages/puzzle-engine`<br>`packages/content-compiler` | `tests/unit`<br>`packages/puzzle-engine/src/test` | — |
 | `AC-RS-016` | Given companion-sent `puzzle.complete`, when received, then TV rejects it and logs a security event without raw payload. | `not_started` | — | — | — |
 | `AC-RS-017` | Given duplicate/stale observations, when received, then no duplicate state transition occurs. | `verified` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test`<br>`docs/validation.md` | — |
-| `AC-RS-018` | Given process death after a completed puzzle, when resumed, then committed state/scene restores without replaying completion. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |
+| `AC-RS-018` | Given process death after a completed puzzle, when resumed, then committed state/scene restores without replaying completion. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt`<br>`packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeFileStore.kt` | `packages/puzzle-engine/src/test`<br>`docs/validation.md` | — |
 | `AC-RS-019` | Given Bedrock failure, when hint is requested, then authored hint arrives within budget and puzzle state is unchanged. | `in_progress` | `packages/puzzle-engine/src/main/kotlin/com/roomsmith/puzzle/RemoteEpisodeSession.kt` | `packages/puzzle-engine/src/test` | — |
 | `AC-RS-020` | Given revoked companion, when reconnecting, then access/private clues are denied until new approval. | `not_started` | — | — | — |
 | `AC-RS-021` | Given offline mode after content download, when playing remote-only, then all three puzzles and case report complete. | `in_progress` | `packages/puzzle-engine` | `packages/puzzle-engine/src/test` | — |

@@ -46,7 +46,7 @@ def validate_harvest_window(document: dict[str, Any]) -> list[str]:
     if any(weight is None for weight in weights) and any(weight is not None for weight in weights):
         issues.add("weight_estimate_fields_must_be_all_present_or_all_unknown")
     if all(weight is not None for weight in weights):
-        lower, estimate, upper = weights
+        estimate, lower, upper = weights
         if not lower <= estimate <= upper:
             issues.add("weight_estimate_outside_interval")
     if visible["estimation_method"] == "visible_count_only" and any(

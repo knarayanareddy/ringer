@@ -29,7 +29,7 @@ Draft validation checks schema/graph semantics only. `--publish` intentionally r
 | --- | --- |
 | [`SPEC.md`](./SPEC.md) | Canonical requirements and vertical slices |
 | [`schemas/episode.schema.json`](./schemas/episode.schema.json) | Canonical episode contract |
-| [`packages/episode-engine/`](./packages/episode-engine/) | Predictions, adult stop/confirmation/correction, measured comparisons, reflection, and in-memory snapshots |
+| [`packages/episode-engine/`](./packages/episode-engine/) | Predictions, adult stop/confirmation/correction, measured comparisons, reflection, and atomic fixture-file snapshots |
 | [`packages/content-compiler/`](./packages/content-compiler/) | Draft schema/graph and publication-preflight checks |
 | [`content/episodes/bridge-to-moon-base/`](./content/episodes/bridge-to-moon-base/) | Draft content copy and pending human reviews |
 | [`scripts/validate-content.ts`](./scripts/validate-content.ts) | Explicit draft/publication-preflight CLI |
